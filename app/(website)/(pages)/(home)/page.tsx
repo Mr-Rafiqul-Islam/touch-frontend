@@ -1,4 +1,4 @@
-import About from "@/components/About";
+import GetApp from "@/components/GetApp";
 import Banner from "@/components/Banner";
 import SearchBar from "@/components/SearchBar";
 
@@ -8,7 +8,7 @@ export default function Home() {
       <main className="font-[family-name:var(--font-geist-sans)]">
         <Banner/>
         <SearchBar/>
-        <About/>
+        <GetApp/>
       </main>
   );
 }

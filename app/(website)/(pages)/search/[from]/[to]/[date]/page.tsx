@@ -34,6 +34,7 @@ const SearchResultsPage = async ({ params }: SearchParams) => {
                 <BusCard />
                 <BusCard />
                 <BusCard />
+                <BusCard />
               </div>
             </main>
           </div>
