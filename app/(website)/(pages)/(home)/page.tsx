@@ -9,7 +9,6 @@ export default function Home() {
         <Banner/>
         <SearchBar/>
         <About/>
-        
       </main>
   );
 }

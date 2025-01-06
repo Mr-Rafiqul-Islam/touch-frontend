@@ -6,7 +6,13 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-
+.search-container{
+  max-width: 1240px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
 /* Style the active dot */
 .custom-swiper .swiper-pagination-bullet-active {
   @apply bg-primary-color; /* Active color */

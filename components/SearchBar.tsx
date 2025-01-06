@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useRouter } from "next/navigation";
 
 function SearchBar() {
   const [tripType, setTripType] = useState("oneWay");
@@ -12,6 +13,19 @@ function SearchBar() {
   const [to, setTo] = useState("Cox's Bazar");
   const [journeyDate, setJourneyDate] = useState<Date | undefined>();
   const [returnDate, setReturnDate] = useState<Date | undefined>();
+  
+  const handleSearch = () => {
+    // Navigate to the dynamic search results page
+    if (!from || !to || !journeyDate) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+    const formattedFrom = from.replace(/\s+/g, "-"); // Replace spaces with hyphens
+    const formattedTo = to.replace(/\s+/g, "-"); // Replace spaces with hyphens
+    const formattedDate = journeyDate.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+    router.push(`/search/${formattedFrom}/${formattedTo}/${formattedDate}`);
+  };
+  const router = useRouter();
   return (
     <section className="bg-slate-200 py-5">
       <div className="container">
@@ -36,26 +50,25 @@ function SearchBar() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>From</Label>
-              <Input
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                placeholder="From"
-              />
+                <Input
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  placeholder="From"
+                />
               </div>
               <div>
                 <Label>To</Label>
                 <Input
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                placeholder="To"
-              />
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  placeholder="To"
+                />
               </div>
-              
             </div>
             {/* Journey Date and Return Date */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-              <Label>Journey Date</Label>
+                <Label>Journey Date</Label>
                 <DatePicker
                   selected={journeyDate}
                   onSelect={setJourneyDate}
@@ -65,7 +78,7 @@ function SearchBar() {
               </div>
               {tripType !== "oneWay" && (
                 <div>
-                <Label>Return Date</Label>
+                  <Label>Return Date</Label>
                   <DatePicker
                     selected={returnDate}
                     onSelect={setReturnDate}
@@ -76,7 +89,10 @@ function SearchBar() {
               )}
             </div>
             <div className="flex flex-col gap-2 mt-4">
-              <button className="bg-primary-color text-white px-14 py-3 rounded-full">
+              <button
+                className="bg-primary-color text-white px-14 py-3 rounded-full"
+                onClick={handleSearch}
+              >
                 Search
               </button>
             </div>

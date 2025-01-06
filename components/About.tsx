@@ -17,19 +17,19 @@ function About() {
               <span className="text-primary-color">mobile app.</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 mt-4">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-gray-600">
                 <CornerDownRightIcon size={20} className="text-primary-color" />
                 Quick and easy bookings
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-gray-600">
                 <CornerDownRightIcon size={20} className="text-primary-color" />
                 Get reminders before departure
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-gray-600">
                 <CornerDownRightIcon size={20} className="text-primary-color" />
                 Instant access to your tickets
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-gray-600">
                 <CornerDownRightIcon size={20} className="text-primary-color" />
                 Travel with digital tickets
               </div>
