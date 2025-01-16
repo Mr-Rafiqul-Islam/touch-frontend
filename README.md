@@ -2,12 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, install the dependency modules:
+1. First, install the dependency modules:
 ```bash
 npm i
 ```
-
-Then, run the development server:
+if conflict then 
+```bash
+npm install --force
+```
+or
+```bash
+npm install react@18 react-dom@18
+```
+2. Then, run the development server:
 
 ```bash
 npm run dev

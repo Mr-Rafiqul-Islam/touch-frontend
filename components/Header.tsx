@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import {
   Sheet,
@@ -11,8 +12,11 @@ import logo from "@/public/logo.png";
 import logobg from "@/public/logo-with-bg.png";
 import Link from "next/link";
 import Image from "next/image";
+import { useFetchUser } from "@/utlis/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 function Header() {
+  const { data: user, isLoading } = useFetchUser();
   return (
     <header className="py-5 sticky top-0 left-0 z-50 w-full bg-primary-color">
       <div className="container">
@@ -53,11 +57,23 @@ function Header() {
           </nav>
           <div className="call-to-action">
             <Link
-              href="/"
-              className="hidden md:block py-3 px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white"
+              href="/login"
+              className={cn("hidden md:block py-3 px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white hover:scale-105",
+              user && "md:hidden")}
             >
               Login
             </Link>
+            <div
+              className={cn(
+                "flex justify-between p-4 bg-gray-100",
+                !user && "hidden"
+              )}
+            >
+              <h1 className="text-xl font-bold">
+                Welcome, {user?.name || "Guest"}!
+              </h1>
+              <button className="btn">Logout</button>
+            </div>
             {/* menu bar */}
             <div className="block md:hidden">
               <Sheet>
@@ -82,7 +98,13 @@ function Header() {
                     <SheetTitle>
                       <div className="bg-primary-color w-full mt-4">
                         <Link href={"/"}>
-                          <Image src={logobg} alt="logo" width={150} height={80}  className="mx-auto"/>
+                          <Image
+                            src={logobg}
+                            alt="logo"
+                            width={150}
+                            height={80}
+                            className="mx-auto"
+                          />
                         </Link>
                       </div>
                     </SheetTitle>
@@ -113,12 +135,28 @@ function Header() {
                         Contact
                       </a>
                     </li>
-                    <Link
-                      href="/"
-                      className="py-3 text-center px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white"
-                    >
-                      Login
-                    </Link>
+                    <div>
+                      <Link
+                        href="/login"
+                        className={cn(
+                          "py-3 text-center px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white hover:scale-105",
+                          user && "hidden"
+                        )}
+                      >
+                        Login
+                      </Link>
+                      <div
+                        className={cn(
+                          "flex justify-between p-4 bg-gray-100",
+                          !user && "hidden"
+                        )}
+                      >
+                        <h1 className="text-xl font-bold">
+                          Welcome, {user?.name || "Guest"}!
+                        </h1>
+                        <button className="btn">Logout</button>
+                      </div>
+                    </div>
                   </ul>
                 </SheetContent>
               </Sheet>

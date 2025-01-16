@@ -45,7 +45,7 @@ const BusCard = ({ bus }: { bus?: any }) => {
           ৳<span>1000</span>
         </h3>
         <div className="flex flex-col items-center gap-1">
-          <a onClick={() => setIsBookingOpen(true)} className="inline-block bg-primary-color hover:bg-primary-color/80 transition-all duration-300 text-white px-4 py-2 rounded-md">
+          <a onClick={() => setIsBookingOpen(true)} className="inline-block cursor-pointer bg-primary-color hover:bg-primary-color/80 transition-all duration-300 text-white px-4 py-2 rounded-md">
             Book Ticket
           </a>
           <p className="text-gray-800 text-sm">

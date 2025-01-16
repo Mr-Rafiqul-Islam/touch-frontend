@@ -53,6 +53,7 @@ function SearchBar() {
                   value={from}
                   onChange={(e) => setFrom(e.target.value)}
                   placeholder="From"
+                  className="focus-visible:ring-transparent  "
                 />
               </div>
               <div>
@@ -61,6 +62,7 @@ function SearchBar() {
                   value={to}
                   onChange={(e) => setTo(e.target.value)}
                   placeholder="To"
+                  className="focus-visible:ring-transparent  "
                 />
               </div>
             </div>
