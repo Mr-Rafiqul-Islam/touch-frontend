@@ -3,6 +3,7 @@ import { useLogin } from "@/utlis/hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 interface LoginFormValues {
   email: string;
@@ -11,13 +12,18 @@ interface LoginFormValues {
 
 const LoginForm = () => {
   const router = useRouter();
-  const { register, handleSubmit } = useForm<LoginFormValues>();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>();
   const { mutate, status, error } = useLogin();
 
   const onSubmit = (data: LoginFormValues) => {
+    
     mutate(data, {
       onSuccess: () => {
+        alert("Login successful!");
         router.push("/"); // Redirect to the home page on success
+      },
+      onError: (error: any) => {
+        alert(error.response.data.message);
       },
     });
   };
@@ -43,6 +49,7 @@ const LoginForm = () => {
                   placeholder="Email"
                   {...register("email", { required: true })}
                 />
+                {errors.email && <p className="text-red-500">Email is required.</p>}
               </div>
               <div>
                 <label htmlFor="password" className="mb-2 text-lg">
@@ -55,6 +62,7 @@ const LoginForm = () => {
                   placeholder="Password"
                   {...register("password", { required: true })}
                 />
+                {errors.password && <p className="text-red-500">Password is required.</p>}
               </div>
               <a
                 className="group text-blue-400 transition-all duration-100 ease-in-out"
@@ -93,17 +101,21 @@ const LoginForm = () => {
               className="flex items-center justify-center mt-5 flex-wrap"
             >
               <button className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1">
-                <img
+                <Image
                   className="max-w-[25px]"
-                  src="https://ucarecdn.com/8f25a2ba-bdcf-4ff1-b596-088f330416ef/"
+                  src="/google.svg"
                   alt="Google"
+                  width={30}
+                  height={30}
                 />
               </button>
               <button className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1">
-                <img
+                <Image
                   className="max-w-[25px]"
-                  src="https://ucarecdn.com/6f56c0f1-c9c0-4d72-b44d-51a79ff38ea9/"
+                  src="facebook.svg"
                   alt="Facebook"
+                  width={30}
+                  height={30}
                 />
               </button>
             </div>

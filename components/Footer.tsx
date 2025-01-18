@@ -22,12 +22,12 @@ function Footer() {
             <h4 className="font-bold text-3xl text-white text-nowrap">Quick Links</h4>
             <ul className="mt-4 flex flex-col gap-4">
               <li>
-                <a
+                <Link
                   href="/"
                   className="text-white hover:text-black duration-500 transition-all font-medium text-sm md:text-base"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
                 <a

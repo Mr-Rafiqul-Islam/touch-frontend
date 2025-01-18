@@ -12,11 +12,17 @@ import logo from "@/public/logo.png";
 import logobg from "@/public/logo-with-bg.png";
 import Link from "next/link";
 import Image from "next/image";
-import { useFetchUser } from "@/utlis/hooks/useAuth";
+import { useFetchUser, useLogout } from "@/utlis/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 function Header() {
   const { data: user, isLoading } = useFetchUser();
+  const { mutate: logout } = useLogout();
+  const handleLogout = async () => {
+    await logout();
+    // Redirect to the login page
+    window.location.href = "/login";
+  };
   return (
     <header className="py-5 sticky top-0 left-0 z-50 w-full bg-primary-color">
       <div className="container">
@@ -30,12 +36,12 @@ function Header() {
           <nav className="w-100 text-center hidden md:block">
             <ul className="flex gap-5">
               <li>
-                <a
+                <Link
                   href="/"
                   className="text-sm md:text-base xl:text-xl uppercase font-medium text-white hover:text-slate-950 duration-300 transition-all"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -112,12 +118,12 @@ function Header() {
                   </SheetHeader>
                   <ul className="flex flex-col gap-4 mt-2">
                     <li className="hover:bg-[#E0115F] group px-2 py-1 duration-300 transition-all">
-                      <a
+                      <Link
                         href="/"
                         className="text-sm md:text-base xl:text-xl uppercase font-medium group-hover:text-white text-slate-950 duration-300 transition-all"
                       >
                         Home
-                      </a>
+                      </Link>
                     </li>
                     <li className="hover:bg-[#E0115F] group px-2 py-1 duration-300 transition-all">
                       <a
@@ -154,7 +160,7 @@ function Header() {
                         <h1 className="text-xl font-bold">
                           Welcome, {user?.name || "Guest"}!
                         </h1>
-                        <button className="btn">Logout</button>
+                        <button className="btn" onClick={handleLogout}>Logout</button>
                       </div>
                     </div>
                   </ul>

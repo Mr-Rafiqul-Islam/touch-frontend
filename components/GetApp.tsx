@@ -9,7 +9,7 @@ function GetApp() {
       <div className="container">
         <div className="grid md:grid-cols-2 grid-cols-1 gap-8 items-center">
           <div className="about-img">
-            <img src="./app-photo.jpg" alt="About" width={500} height={500} />
+            <Image src="/app-photo.jpg" alt="About" className="!aspect-auto mx-auto md:mx-0" width={500} height={500} />
           </div>
           <div className="about-content">
             <h2 className="font-bold max-w-[600px] md:leading-[50px] text-3xl lg:text-4xl text-center md:text-start">
@@ -34,14 +34,14 @@ function GetApp() {
                 Travel with digital tickets
               </div>
             </div>
-            <div className="store-img flex flex-col md:flex-row gap-4 mt-6 md:mt-8 items-center md:items-start">
+            <div className="store-img flex flex-col md:flex-row gap-4 mt-6 md:mt-8 items-center">
               <Link href='/'>
                 <Image
                   src="/google-play-store.png"
                   alt="Google Play"
                   width={200}
                   height={60}
-                  className=""
+                  className="!aspect-auto w-full h-[65px]"
                 />
               </Link>
               <Link href='/'>
@@ -50,7 +50,7 @@ function GetApp() {
                   alt="App Store"
                   width={200}
                   height={90}
-                  className="w-full h-[65px]"
+                  className="w-full h-[65px] !aspect-auto"
                 />
               </Link>
             </div>

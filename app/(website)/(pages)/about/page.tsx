@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 function AboutPage() {
@@ -7,7 +8,7 @@ function AboutPage() {
         <div className="sm:flex items-center max-w-screen-xl">
           <div className="sm:w-1/2 p-10">
             <div className="image object-center text-center">
-              <img src="./about.png" />
+              <Image src="/about.png" alt="About" className=" !aspect-auto" width={100000} height={100000} />
             </div>
           </div>
           <div className="sm:w-1/2 p-5">
