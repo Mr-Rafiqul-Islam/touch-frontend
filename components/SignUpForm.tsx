@@ -2,6 +2,7 @@
 import { useSignUp } from "@/utlis/hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -24,17 +25,50 @@ const SignUpForm = () => {
   const onSubmit = (data: SignUpFormValues) => {
     mutate(data, {
       onSuccess: () => {
-        alert("Sign up successful!");
-        router.push("/verify"); // Redirect to the verify page on success
+        toast("Sign Up Successful!👌", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+          onClose: () => router.push("/verify"), // Redirect to the verify page on success
+        });
       },
       onError: (error: any) => {
-        alert(error.response.data.message);
+        toast(error.response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       },
     });
   };
 
   return (
     <div id="back-div" className="bg-primary-color rounded-[26px] m-4">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <div className="border-[20px] border-transparent rounded-[20px] bg-white shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
         <h1 className="pt-8 pb-6 font-bold text-5xl text-center cursor-default">
           Sign Up
