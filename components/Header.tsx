@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -16,9 +16,16 @@ import { useFetchUser, useLogout } from "@/utlis/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 function Header() {
-  const { data: user, isLoading } = useFetchUser();
+  const { data: user, isLoading, refetch } = useFetchUser();
   const { mutate: logout } = useLogout();
+
+  useEffect(() => {
+    refetch();
+  }, [user,refetch]);
+
   const handleLogout = async () => {
+    console.log("logout");
+    
     await logout();
     // Redirect to the login page
     window.location.href = "/login";
@@ -76,9 +83,9 @@ function Header() {
               )}
             >
               <h1 className="text-xl font-bold">
-                Welcome, {user?.name || "Guest"}!
+                Welcome, {user?.user?.name || "Guest"}!
               </h1>
-              <button className="btn">Logout</button>
+              <button className="btn" onClick={handleLogout}>Logout</button>
             </div>
             {/* menu bar */}
             <div className="block md:hidden">
@@ -153,11 +160,11 @@ function Header() {
                       </Link>
                       <div
                         className={cn(
-                          "flex justify-between p-4 bg-gray-100",
+                          "flex justify-between p-2 rounded-2xl bg-gray-100",
                           !user && "hidden"
                         )}
                       >
-                        <h1 className="text-xl font-bold">
+                        <h1 className="text-xm font-bold">
                           Welcome, {user?.name || "Guest"}!
                         </h1>
                         <button className="btn" onClick={handleLogout}>Logout</button>

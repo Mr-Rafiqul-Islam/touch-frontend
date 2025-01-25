@@ -27,7 +27,7 @@ const SignUpForm = () => {
       onSuccess: () => {
         toast("Sign Up Successful!👌", {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1500,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -58,7 +58,7 @@ const SignUpForm = () => {
     <div id="back-div" className="bg-primary-color rounded-[26px] m-4">
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={1500}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick={false}
