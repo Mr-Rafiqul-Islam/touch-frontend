@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect } from "react";
 import {
   Sheet,
@@ -14,6 +14,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useFetchUser, useLogout } from "@/utlis/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import User from "./User";
+import { FaBars } from "react-icons/fa6";
 
 function Header() {
   const { data: user, isLoading, refetch } = useFetchUser();
@@ -21,11 +23,11 @@ function Header() {
 
   useEffect(() => {
     refetch();
-  }, [user,refetch]);
+  }, [user, refetch]);
 
   const handleLogout = async () => {
     console.log("logout");
-    
+
     await logout();
     // Redirect to the login page
     window.location.href = "/login";
@@ -68,43 +70,12 @@ function Header() {
               </li>
             </ul>
           </nav>
-          <div className="call-to-action">
-            <Link
-              href="/login"
-              className={cn("hidden md:block py-3 px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white hover:scale-105",
-              user && "md:hidden")}
-            >
-              Login
-            </Link>
-            <div
-              className={cn(
-                "flex justify-between p-4 bg-gray-100",
-                !user && "hidden"
-              )}
-            >
-              <h1 className="text-xl font-bold">
-                Welcome, {user?.user?.name || "Guest"}!
-              </h1>
-              <button className="btn" onClick={handleLogout}>Logout</button>
-            </div>
+          <div className="call-to-action flex gap-4 items-center">
             {/* menu bar */}
-            <div className="block md:hidden">
+            <div className="flex items-center md:hidden ">
               <Sheet>
                 <SheetTrigger>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16m-7 6h7"
-                    ></path>
-                  </svg>
+                  <FaBars className="h-8 w-8 text-white"/>
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
@@ -148,31 +119,30 @@ function Header() {
                         Contact
                       </a>
                     </li>
-                    <div>
-                      <Link
-                        href="/login"
-                        className={cn(
-                          "py-3 text-center px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white hover:scale-105",
-                          user && "hidden"
-                        )}
-                      >
-                        Login
-                      </Link>
-                      <div
-                        className={cn(
-                          "flex justify-between p-2 rounded-2xl bg-gray-100",
-                          !user && "hidden"
-                        )}
-                      >
-                        <h1 className="text-xm font-bold">
-                          Welcome, {user?.name || "Guest"}!
-                        </h1>
-                        <button className="btn" onClick={handleLogout}>Logout</button>
-                      </div>
-                    </div>
+                    <Link
+                      href="/login"
+                      className={cn(
+                        "py-3 text-center px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white hover:scale-105",
+                        user && "hidden"
+                      )}
+                    >
+                      Login
+                    </Link>
                   </ul>
                 </SheetContent>
               </Sheet>
+            </div>
+            <Link
+              href="/login"
+              className={cn(
+                "hidden md:block py-3 px-[40px] text-sm md:text-base xl:text-[18px] bg-slate-900 transition-all duration-300 rounded-full text-white hover:scale-105",
+                user && "md:hidden"
+              )}
+            >
+              Login
+            </Link>
+            <div className={cn("flex gap-4 items-center", !user && "hidden")}>
+              <User userData={user?.user} />
             </div>
           </div>
         </div>
