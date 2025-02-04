@@ -96,6 +96,7 @@ const SignUpForm = () => {
               className="border p-3 shadow-md placeholder:text-base ease-in-out duration-300 outline-none border-gray-300 rounded-lg w-full"
               type="email"
               placeholder="Email"
+              autoComplete="email"
               {...register("email", { required: true })}
             />
             {errors.email && <p className="text-red-500">Email is required.</p>}
@@ -122,6 +123,7 @@ const SignUpForm = () => {
               className="border p-3 shadow-md placeholder:text-base ease-in-out duration-300 outline-none border-gray-300 rounded-lg w-full"
               type="password"
               placeholder="Password"
+              autoComplete="current-password"
               {...register("password", { required: true })}
             />
             {errors.password && (

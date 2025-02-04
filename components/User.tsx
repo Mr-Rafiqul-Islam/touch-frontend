@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { userData } from "@/types";
 import { useLogout } from "@/utlis/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 function User({ userData }: { userData: userData | null }) {
   const { mutate: logout } = useLogout();
+  const router = useRouter();
   const handleLogout = async () => {
     console.log("logout");
     logout();
@@ -37,15 +39,15 @@ function User({ userData }: { userData: userData | null }) {
             {userData?.name || "Guest"}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:!text-primary-color" onClick={()=> router.push("/profile")}>
             {" "}
             <UserCircle className="h-3 w-3"/> Profile
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:!text-primary-color" onClick={()=> router.push("/my-booking")}>
             {" "}
             <Tag className="h-3 w-3"/> My Booking
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleLogout}><LogOut className="h-3 w-3"/> Log Out</DropdownMenuItem>
+          <DropdownMenuItem className="hover:!text-primary-color" onClick={handleLogout}><LogOut className="h-3 w-3"/> Log Out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

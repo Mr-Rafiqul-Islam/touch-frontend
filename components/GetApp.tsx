@@ -9,7 +9,7 @@ function GetApp() {
       <div className="container">
         <div className="grid md:grid-cols-2 grid-cols-1 gap-8 items-center">
           <div className="about-img">
-            <Image src="/app-photo.jpg" alt="About" className="!aspect-auto mx-auto md:mx-0" width={500} height={500} />
+            <Image src="/app-photo.jpg" alt="About" className="!aspect-auto mx-auto md:mx-0" width="500" height="500" style={{ width: "auto", height: "auto" }}/>
           </div>
           <div className="about-content">
             <h2 className="font-bold max-w-[600px] md:leading-[50px] text-3xl lg:text-4xl text-center md:text-start">
