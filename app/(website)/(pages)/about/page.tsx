@@ -8,7 +8,7 @@ function AboutPage() {
         <div className="sm:flex items-center max-w-screen-xl">
           <div className="sm:w-1/2 p-10">
             <div className="image object-center text-center">
-              <Image src="/about.png" alt="About" className=" !aspect-auto" width={100000} height={100000} />
+              <Image src="/about.svg" alt="About" className=" !aspect-auto" width={100000} height={100000} />
             </div>
           </div>
           <div className="sm:w-1/2 p-5">
