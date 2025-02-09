@@ -1,14 +1,44 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 const MyBooking = () => {
-  const [activeTab, setActiveTab] = React.useState("all");
+// for switching tabs
+  const [activeTab, setActiveTab] = useState("all");
+
+  const filterOptions = ["2025", "2024"];
+
+  const initialFilters = Object.fromEntries(
+    filterOptions.map((option) => [option, false])
+  );
+  // State to store selected filters
+  const [filters, setFilters] = useState(initialFilters);
+
+  // Check if any filter is selected
+  const isAnyFilterChecked = Object.values(filters).some((checked) => checked);
+
+  // Handle checkbox change
+  const handleCheckboxChange = (id: keyof typeof filters) => {
+    setFilters((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+  
+  // Reset all filters
+  const handleReset = () => {
+    setFilters({
+      2025: false,
+      2024: false,
+    });
+  };
+  
   return (
     <div className="container py-10">
       <h1 className="text-center text-primary-color text-4xl font-bold">
@@ -41,63 +71,88 @@ const MyBooking = () => {
         <aside className="w-full md:w-1/4 rounded-lg overflow-hidden">
           <Card className="p-4">
             <CardContent>
-              <h3 className="text-xl font-bold pb-4 border-b-2">Filters</h3>
+              <div className="flex justify-center items-center w-full pb-3 border-b-2">
+                <h3 className="text-xl font-bold w-full">Filters</h3>
+                <Button
+                  variant="outline"
+                  className="!border-0 !bg-transparent text-primary-color"
+                  size="sm"
+                  disabled={!isAnyFilterChecked}
+                  onClick={handleReset}
+                >
+                  Reset
+                </Button>
+              </div>
               <div className="flex flex-col gap-2 mt-4">
-            <h5 className="uppercase text-primary-color font-semibold mb-2">Year</h5>
-            <p className="flex gap-2 items-center">
-                <Checkbox  id="2025" className="data-[state=checked]:bg-primary-color data-[state=checked]:border-primary-color"/> <Label htmlFor="2025" className="cursor-pointer">2025</Label>
-            </p>
-            <p className="flex gap-2 items-center">
-                <Checkbox id="2024" className="data-[state=checked]:bg-primary-color data-[state=checked]:border-primary-color"/><Label htmlFor="2024" className="cursor-pointer">2024</Label>
-            </p>
-        </div>
+                <h5 className="uppercase text-primary-color font-semibold mb-2">
+                  Year
+                </h5>
+                {filterOptions.map((year) => (
+                  <p key={year} className="flex gap-2 items-center">
+                    <Checkbox
+                      id={year}
+                      checked={filters[year as keyof typeof filters]}
+                      onCheckedChange={() =>
+                        handleCheckboxChange(year as keyof typeof filters)
+                      }
+                      className="data-[state=checked]:bg-primary-color data-[state=checked]:border-primary-color"
+                    />
+                    <Label htmlFor={year} className="cursor-pointer capitalize">
+                      {year.replace(/([A-Z])/g, " $1").trim()}
+                    </Label>
+                  </p>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </aside>
         <div className="w-full md:w-3/4">
           <Card className="p-4 rounded-lg">
             <CardContent>
-              {
-                activeTab === "all" ? (<div className="all">
-                <Image
-                  src="/city bus-bro.svg"
-                  alt="bus"
-                  className="mx-auto my-5 opacity-80"
-                  width={300}
-                  height={300}
-                />
-                <h3 className="text-2xl font-bold text-center">
-                  No Bookings Available
-                </h3>
-                <p className="text-center text-gray-600">
-                  Begin planning your next journey with ease today
-                </p>
-                <Link href="/" className="flex justify-center">
-                  <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
-                    Search
-                  </button>
-                </Link>
-              </div>)
-              :(<div className="pending">
-                <Image
-                  src="/city bus-bro.svg"
-                  alt="bus"
-                  className="mx-auto my-5 opacity-80"
-                  width={300}
-                  height={300}
-                />
-                <h3 className="text-2xl font-bold text-center">
-                  You don't have any bookings waiting to happen
-                </h3>
-                <p className="text-center text-gray-600">
-                  But it's never too late to book your next comfortable and easy journey!
-                </p>
-                <Link href="/" className="flex justify-center">
-                  <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
-                    Search
-                  </button>
-                </Link>
-              </div>)}
+              {activeTab === "all" ? (
+                <div className="all">
+                  <Image
+                    src="/city bus-bro.svg"
+                    alt="bus"
+                    className="mx-auto my-5 opacity-80"
+                    width={300}
+                    height={300}
+                  />
+                  <h3 className="text-2xl font-bold text-center">
+                    No Bookings Available
+                  </h3>
+                  <p className="text-center text-gray-600">
+                    Begin planning your next journey with ease today
+                  </p>
+                  <Link href="/" className="flex justify-center">
+                    <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
+                      Search
+                    </button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="pending">
+                  <Image
+                    src="/city bus-bro.svg"
+                    alt="bus"
+                    className="mx-auto my-5 opacity-80"
+                    width={300}
+                    height={300}
+                  />
+                  <h3 className="text-2xl font-bold text-center">
+                    You don't have any bookings waiting to happen
+                  </h3>
+                  <p className="text-center text-gray-600">
+                    But it's never too late to book your next comfortable and
+                    easy journey!
+                  </p>
+                  <Link href="/" className="flex justify-center">
+                    <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
+                      Search
+                    </button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
