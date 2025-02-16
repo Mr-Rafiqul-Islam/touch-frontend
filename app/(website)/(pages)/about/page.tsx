@@ -71,7 +71,7 @@ function AboutPage() {
               <h3 className="text-xl font-bold">Economy Class</h3>
             </div>
             <div className="p-4 shadow-lg rounded-lg bg-green-100 hover:bg-primary-color hover:text-white transition-colors">
-              <h3 className="text-xl font-bold">First Class</h3>
+              <h3 className="text-xl font-bold">Sleeping Coach</h3>
             </div>
             <div className="p-4 shadow-lg rounded-lg bg-green-100 hover:bg-primary-color hover:text-white transition-colors">
               <h3 className="text-xl font-bold">Premium Economy</h3>
