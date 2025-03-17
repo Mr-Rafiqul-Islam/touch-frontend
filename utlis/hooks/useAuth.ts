@@ -1,20 +1,29 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../api";
 import queryClient from "../queryClient";
 
-// Set token in local storage
-const setToken = (token: string) => {
+// Set token and email in local storage
+const setAuthData = (token: string, email: string) => {
   localStorage.setItem("authToken", token);
+  localStorage.setItem("registeredEmail", email);
 };
-
+const setRegisteredEmail = (email: string) => {
+  localStorage.setItem("registeredEmail", email);
+};
 // Get token from local storage
-const getToken = () => {
+export const getToken = () => {
   return localStorage.getItem("authToken");
 };
 
-// Remove token from local storage
-const removeToken = () => {
+// Get registered email from local storage
+const getRegisteredEmail = () => {
+  return localStorage.getItem("registeredEmail");
+};
+
+// Remove token and email from local storage
+const removeAuthData = () => {
   localStorage.removeItem("authToken");
+  localStorage.removeItem("registeredEmail");
 };
 
 // Sign up mutation
@@ -31,8 +40,8 @@ export const useSignUp = () => {
       password: string;
     }) => {
       const response = await api.post("/user-registration", data);
-      const token = response.data.token;
-      setToken(token);
+      const { email } = data;
+      setRegisteredEmail(email);
       return response.data;
     },
   });
@@ -46,15 +55,21 @@ export const useVerify = () => {
     { verification_code: string }
   >({
     mutationFn: async (data: { verification_code: string }) => {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No token found");
+      const response = await api.post("/verify", data);
+      return response.data;
+    },
+  });
+};
+
+// Resend verification code mutation
+export const useResend = () => {
+  return useMutation<void, Error, void>({
+    mutationFn: async () => {
+      const email = getRegisteredEmail();
+      if (!email) {
+        throw new Error("No registered email found");
       }
-      const response = await api.post("/verify", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.post("/resend-verification-code", { email });
       return response.data;
     },
   });
@@ -69,8 +84,8 @@ export const useLogin = () => {
   >({
     mutationFn: async (data: { email: string; password: string }) => {
       const response = await api.post("/login", data);
-      const token = response.data.token;
-      setToken(token);
+      const { token, email } = response.data;
+      setAuthData(token, email);
       return response.data;
     },
   });
@@ -99,8 +114,8 @@ export const useFetchUser = () => {
 export const useLogout = () => {
   return useMutation({
     mutationFn: async () => {
-      // Simulate logout operation by removing token
-      removeToken();
+      // Remove token and email upon logout
+      removeAuthData();
       // Invalidate the user query and remove the data from the cache
       queryClient.invalidateQueries({
         queryKey: ["user"],

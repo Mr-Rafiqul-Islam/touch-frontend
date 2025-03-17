@@ -2,14 +2,16 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useVerify } from "@/utlis/hooks/useAuth";
+import { useVerify, useResend } from "@/utlis/hooks/useAuth";
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
 
 interface VerifyFormValues {
   verification_code: string;
 }
 const Verify = () => {
   const router = useRouter();
+  const resendCode = useResend();
   const {
     register,
     handleSubmit,
@@ -18,6 +20,8 @@ const Verify = () => {
   const { mutate, status, error } = useVerify();
 
   const onSubmit = (data: VerifyFormValues) => {
+    
+    console.log("Submitted");
     mutate(data, {
       onSuccess: () => {
         toast("Verification successful!", {
@@ -34,7 +38,7 @@ const Verify = () => {
         });
       },
       onError: (error: any) => {
-        toast(error.response.data.message, {
+        toast(error?.response?.data?.message, {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -49,8 +53,18 @@ const Verify = () => {
       },
     });
   };
+
+  // Resend OTP
+  const handleResend = (event: React.MouseEvent<HTMLButtonElement>) => {
+    resendCode.mutate();
+    const button = event.currentTarget;
+    button.disabled = true;
+    setTimeout(() => {
+      button.disabled = false;
+    }, 60000);   // Resend button will be disabled for 60 seconds
+  };
   return (
-    <div className="max-w-md mx-auto border rounded my-20">
+    <div className="max-w-md mx-auto border rounded my-48">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -87,12 +101,14 @@ const Verify = () => {
           )}
         </div>
         <div className="flex items-center justify-between">
-          <button
-            className="bg-primary-color hover:bg-primary-color/90 transition-all duration-300 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
+          
+          <Button variant={"default"} className="bg-primary-color hover:bg-primary-color/90" type="submit" >Verify</Button>
+          <Button
+            variant={"default"}
+            onClick={handleResend}
           >
-            Verify
-          </button>
+            Resend
+          </Button>
         </div>
         {error && (
           <p className="text-red-500">{(error as any).response.data.message}</p>
