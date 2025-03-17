@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useFetchLocations } from "@/utlis/hooks/useFetchLocations";
 
 const locations = [
   { value: "dhaka", label: "Dhaka" },
@@ -29,6 +30,8 @@ function SearchBar() {
   const [returnDate, setReturnDate] = useState<Date | undefined>();
   const router = useRouter();
 
+  const { data, error, isLoading } = useFetchLocations();
+  console.log(data);
   const handleSearch = () => {
     if (!from || !to || !journeyDate) {
       alert("Please fill in all required fields!");
