@@ -107,14 +107,14 @@ const LoginForm = () => {
               <p className="text-red-500">Password is required.</p>
             )}
           </div>
-          <a
+          <Link
             className="group text-blue-400 transition-all duration-100 ease-in-out"
             href="#"
           >
             <span className="bg-left-bottom bg-gradient-to-r text-sm from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
               Forget your password?
             </span>
-          </a>
+          </Link>
           <button
             className="bg-primary-color shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 transition duration-300 ease-in-out"
             type="submit"
