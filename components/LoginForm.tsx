@@ -101,6 +101,7 @@ const LoginForm = () => {
               className="border p-3 shadow-md placeholder:text-base ease-in-out duration-300 outline-none border-gray-300 rounded-lg w-full"
               type="password"
               placeholder="Password"
+              autoComplete="off"
               {...register("password", { required: true })}
             />
             {errors.password && (
@@ -109,7 +110,7 @@ const LoginForm = () => {
           </div>
           <Link
             className="group text-blue-400 transition-all duration-100 ease-in-out"
-            href="#"
+            href="/forget-password"
           >
             <span className="bg-left-bottom bg-gradient-to-r text-sm from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
               Forget your password?

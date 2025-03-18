@@ -11,13 +11,13 @@ export const useForgetPassword = () => {
 };
 export const useResetPassword = () => {
   return useMutation<
-    { email: string; reset_code: number; password: string },
+    { email: string; resetCode: string; password: string },
     Error,
-    { email: string; reset_code: number; password: string }
+    { email: string; resetCode: string; password: string }
   >({
     mutationFn: async (data: {
       email: string;
-      reset_code: number;
+      resetCode: string;
       password: string;
     }) => {
       const response = await api.post("/reset-password", data);

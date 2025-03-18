@@ -2,8 +2,8 @@ import React from "react";
 import FilterSidebar from "@/components/search/FilterSidebar";
 import SortOptions from "@/components/search/SortOptions";
 import SearchBar from "@/components/SearchBar";
-import BusCard from "@/components/search/BusCard";
 import FilterBtn from "@/components/search/FilterBtn";
+import Trip from "@/components/search/Trip";
 
 
 interface SearchParams {
@@ -28,14 +28,7 @@ const SearchResultsPage = async ({ params }: SearchParams) => {
                   <FilterBtn/>
                 </div>
               </div>
-              <div className="grid grid-cols-1 gap-4">
-                <BusCard />
-                <BusCard />
-                <BusCard />
-                <BusCard />
-                <BusCard />
-                <BusCard />
-              </div>
+              <Trip />
             </main>
           </div>
         </div>
