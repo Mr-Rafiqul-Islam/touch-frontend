@@ -25,3 +25,19 @@ export const useResetPassword = () => {
     },
   });
 };
+export const useUpdatePassword = () => {
+  return useMutation<
+    { current_password: string; new_password: string; new_password_confirmation: string },
+    Error,
+    { current_password: string; new_password: string; new_password_confirmation: string }
+  >({
+    mutationFn: async (data: {
+      current_password: string;
+      new_password: string;
+      new_password_confirmation: string;
+    }) => {
+      const response = await api.post("/update-password", data);
+      return response.data;
+    },
+  });
+};

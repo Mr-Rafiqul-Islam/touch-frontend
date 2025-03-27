@@ -24,6 +24,7 @@ const getRegisteredEmail = () => {
 const removeAuthData = () => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("registeredEmail");
+  localStorage.removeItem("user_id");
 };
 
 // Sign up mutation
@@ -105,6 +106,7 @@ export const useFetchUser = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      localStorage.setItem("user_id", response.data.user.id);
       return response.data;
     },
   });

@@ -24,6 +24,7 @@ import { useFetchLocations } from "@/utlis/hooks/useFetchLocations";
 import { useSearchTrip } from "@/utlis/hooks/useSearchTrip";
 import { format } from "date-fns";
 import { useSearchContext } from "@/utlis/provider/SearchProvider";
+import { useForm } from "react-hook-form";
 
 interface searchTripvalues {
   from_location_id: number;
@@ -31,6 +32,13 @@ interface searchTripvalues {
   date: string;
 }
 function SearchBar() {
+  
+const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<searchTripvalues>();
+
 
   const [tripType, setTripType] = useState("oneWay");
   const [from, setFrom] = useState("");
@@ -46,10 +54,6 @@ function SearchBar() {
 
   // console.log(locationArray, "lcation from API response");
 
-  // const locations = [
-  //   { id: 1, value: "dhaka", label: "Dhaka" },
-  //   { id: 2, value: "coxsbazar", label: "Cox's Bazar" },
-  // ];
   const locations = locationArray?.map((loc: any) => ({
     id: loc.id,
     value: loc.name.toLowerCase().replace(/\s+/g, ""),
@@ -76,6 +80,7 @@ function SearchBar() {
       onSuccess: (data) => {
         // console.log(data, "TRIP DATA");
         setData(data); // Store data in context
+        console.log(data);
         return data;
       },
       onError: (error) => {
@@ -133,6 +138,7 @@ function SearchBar() {
                                 setFrom(location.value);
                                 setFromId(location.id);
                               }}
+                              value={location.value}
                             >
                               <Check
                                 className={cn(
@@ -179,6 +185,7 @@ function SearchBar() {
                                 setTo(location.value);
                                 setToId(location.id);
                               }}
+                              value={location.value}
                             >
                               <Check
                                 className={cn(

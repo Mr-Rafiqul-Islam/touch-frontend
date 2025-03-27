@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -12,68 +12,87 @@ import { PiSeatBold } from "react-icons/pi";
 import { GiStarFormation } from "react-icons/gi";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import SeatLayout from "./SeatLayout";
+import { Seats, SeatState, Trip } from "@/types";
+import { formatTime } from "@/lib/helper";
+import { useDispatch } from "react-redux";
+import { setTripData } from "@/store/tripSlice";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 
-const seats = [
-  "A1",
-  "A2",
-  "A3",
-  "A4",
-  "B1",
-  "B2",
-  "B3",
-  "B4",
-  "C1",
-  "C2",
-  "C3",
-  "C4",
-  "D1",
-  "D2",
-  "D3",
-  "D4",
-  "E1",
-  "E2",
-  "E3",
-  "E4",
-  "F1",
-  "F2",
-  "F3",
-  "F4",
-  "G1",
-  "G2",
-  "G3",
-  "G4",
-  "H1",
-  "H2",
-  "H3",
-  "H4",
-  "I1",
-  "I2",
-  "I3",
-  "I4",
-];
 function SeatBooking({
   isOpen,
   onClose,
+  trip,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  trip: Trip;
 }) {
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const [bookedSeats, setBookedSeats] = useState<string[]>(["A1", "B3"]); // add booked seats here
+  const dispatch = useDispatch();
+  const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+  const [bookedSeats, setBookedSeats] = useState<Seats[]>([]);
+  const [seatData, setSeatData] = useState<SeatState[]>([]);
+  const totalSeatsArray = trip?.vehicle?.seats;
+  useEffect(() => {
+    const initialBookedSeats = totalSeatsArray.filter((seat) => seat.is_booked == 2);
+    setBookedSeats(initialBookedSeats);
+  }, [trip]);
   const maxSeats = 4;
 
-  const toggleSeat = (seat: string) => {
+  const toggleSeat = (seat: number) => {
     if (selectedSeats.length < maxSeats) {
       setSelectedSeats((prev) =>
         prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]
       );
+      console.log(selectedSeats);
     } else if (selectedSeats.includes(seat)) {
       setSelectedSeats((prev) => prev.filter((s) => s !== seat));
+      console.log(selectedSeats);
     }
   };
 
+  useEffect(() => {
+    const selectedSeatsData = selectedSeats.map((seatId) => ({
+      id: seatId,
+    }));
+    setSeatData(selectedSeatsData);
+  }, [selectedSeats]);
+  
+ console.log(seatData);
+ 
+  const router = useRouter();
+  const handleContinue = (trip: Trip) => {
+    const getToken = localStorage.getItem("authToken");
+    const userId = localStorage.getItem("user_id");
+    if (getToken) {
+      dispatch(
+        setTripData({
+          user_id: userId ? parseInt(userId, 10) : null,
+          trip_id: trip.id,
+          seat_data: seatData,
+          travel_date: trip.start_date,
+        })
+      );
+      router.push("/booking");
+    } else {
+      toast.error("Please login to continue");
+    }
+  }
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
+      <ToastContainer
+        position="top-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <SheetContent className="w-full max-h-screen overflow-y-scroll">
         <Tabs defaultValue="seat">
           <SheetHeader>
@@ -112,24 +131,34 @@ function SeatBooking({
             <div className="h-full">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold">Hanif Enterprise</h2>
+                  <h2 className="text-xl font-bold">{trip?.vehicle?.name}</h2>
                   <p className="text-sm text-gray-600">
-                    Hino, AK1J Super Plus Non AC
+                    {trip?.vehicle?.type?.name}
                   </p>
-                  <p className="text-sm text-gray-600">Coach No. #800</p>
+                  <p className="text-sm text-gray-600">
+                    Coach No. #{trip?.vehicle?.vehicle_no}
+                  </p>
                 </div>
               </div>
               <div className="mt-4">
                 <div className="flex justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Departure</p>
-                    <p className="text-lg font-bold">Dhaka</p>
-                    <p className="text-sm text-gray-600">06:30 AM</p>
+                    <p className="text-lg font-bold">
+                      {trip?.route.from_location.name}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {trip?.start_time ? formatTime(trip.start_time) : "N/A"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Arrival</p>
-                    <p className="text-lg font-bold">Cox's Bazar</p>
-                    <p className="text-sm text-gray-600">02:01 PM</p>
+                    <p className="text-lg font-bold">
+                      {trip?.route.to_location.name}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {trip?.end_time ? formatTime(trip.end_time) : "N/A"}
+                    </p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
@@ -142,13 +171,13 @@ function SeatBooking({
                 </p>
                 <div className="flex justify-around my-4">
                   <ul className="flex items-center">
-                    <li className="w-[15px] h-[15px] mr-[5px] rounded-[4px] available-example bg-white border border-black"></li>
+                    <li className="w-[15px] h-[15px] mr-[5px] rounded-[4px] available-example bg-[#d7d7d7] border border-[#d7d7d7]"></li>
                     <li className="text-[12px] font-normal leading-[15px] text-[#202020]">
                       Available
                     </li>
                   </ul>
                   <ul className="flex items-center">
-                    <li className="w-[15px] h-[15px] mr-[5px] rounded-[4px] sold-example bg-[#d7d7d7] border border-[#d7d7d7]"></li>
+                    <li className="w-[15px] h-[15px] mr-[5px] rounded-[4px] sold-example bg-red-500  opacity-50 border border-[#ef4444]"></li>
                     <li className="text-[12px] font-normal leading-[15px] text-[#202020]">
                       Sold
                     </li>
@@ -162,7 +191,8 @@ function SeatBooking({
                 </div>
                 {/* Seat Layout part start  */}
                 <SeatLayout
-                  seats={seats}
+                  seats={trip?.vehicle.seats}
+                  vehicle_category={trip?.vehicle.category}
                   bookedSeats={bookedSeats}
                   selectedSeats={selectedSeats}
                   toggleSeat={toggleSeat}
@@ -171,14 +201,21 @@ function SeatBooking({
                 {/* Seat Layout part end  */}
               </div>
               <div className="mt-4">
-                <p className="text-lg font-bold">Total: ৳2000</p>
-                <button className="bg-primary-color text-white p-3 w-full rounded mt-2">
+                <p className="text-lg font-bold">
+                  Total: ৳{trip?.ticket_price}
+                </p>
+                <button className="bg-primary-color text-white p-3 w-full rounded mt-2" onClick={() => handleContinue(trip)}>
                   Continue
                 </button>
               </div>
             </div>
           </TabsContent>
-          <TabsContent value="amneties">Change your password here.</TabsContent>
+          <TabsContent value="amneties">
+            Check Your Amnities here.
+            <ol className="mt-2 list-decimal">{trip?.vehicle?.amenities?.map((item) => (
+              <li key={item.id} className="py-2">{item.name}</li>
+            ))}</ol>
+          </TabsContent>
           <TabsContent value="policies">Policies are given here.</TabsContent>
         </Tabs>
       </SheetContent>

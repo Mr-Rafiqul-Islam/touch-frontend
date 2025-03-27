@@ -3,13 +3,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { formatTime } from "@/lib/helper";
 import { cn } from "@/lib/utils";
+import { BookingList } from "@/types";
+import { useMyBooking } from "@/utlis/hooks/useFetchLocations";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const MyBooking = () => {
-// for switching tabs
+
+
+  const { data } = useMyBooking();
+  const [bookingList, setBookingList] = useState<BookingList[] | []>(
+    data?.data ?? []
+  );
+
+  useEffect(() => {
+    setBookingList(data?.data ?? []);
+  }, [data]);
+
+  // for switching tabs
   const [activeTab, setActiveTab] = useState("all");
 
   const filterOptions = ["2025", "2024"];
@@ -30,7 +44,7 @@ const MyBooking = () => {
       [id]: !prev[id],
     }));
   };
-  
+
   // Reset all filters
   const handleReset = () => {
     setFilters({
@@ -38,7 +52,7 @@ const MyBooking = () => {
       2024: false,
     });
   };
-  
+
   return (
     <div className="container py-10">
       <h1 className="text-center text-primary-color text-4xl font-bold">
@@ -110,25 +124,69 @@ const MyBooking = () => {
           <Card className="p-4 rounded-lg">
             <CardContent>
               {activeTab === "all" ? (
-                <div className="all">
-                  <Image
-                    src="/city bus-bro.svg"
-                    alt="bus"
-                    className="mx-auto my-5 opacity-80"
-                    width={300}
-                    height={300}
-                  />
-                  <h3 className="text-2xl font-bold text-center">
-                    No Bookings Available
-                  </h3>
-                  <p className="text-center text-gray-600">
-                    Begin planning your next journey with ease today
-                  </p>
-                  <Link href="/" className="flex justify-center">
-                    <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
-                      Search
-                    </button>
-                  </Link>
+                <div>
+                  {bookingList?.length > 0 ? (
+                    <div>
+                      {bookingList.map((item) => (
+                        <div key={item.id} className="border-b mb-2">
+                          <h2 className="text-xl text-primary-color font-bold">{item.company?.name}</h2>
+                          <div className="flex gap-2 my-2">
+                            <span>
+                              {item?.trip?.route?.from_location?.name}
+                            </span>{" "}
+                            To{" "}
+                            <span>{item?.trip?.route?.to_location?.name},</span>
+                          </div>
+                          <div className="flex gap-2 my-2">
+                            <strong>Departure :</strong>
+                            <span>
+                              {item?.trip?.start_date}
+                            </span>{" "}
+                            |{" "}
+                            <span>
+                            {formatTime(item?.trip?.start_time)},</span>
+                          </div>
+                          <div className="flex gap-2 my-2">
+                            <strong>Seat :</strong>
+                            <span className="flex gap-2">
+                              {item?.seat_data?.map((seat)=> (
+                                <p>
+                                  {seat.seatNo},
+                                </p>
+                              ))}
+                            </span>
+                          </div>
+                          <div className="flex gap-2 my-2">
+                            <strong>Total Price :</strong>
+                            <span className="flex gap-2">
+                              {`${item?.trip?.ticket_price}BDT x${ item?.seat_data?.length} = ${ item?.trip?.ticket_price * item?.seat_data?.length}BDT`}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="all">
+                      <Image
+                        src="/city bus-bro.svg"
+                        alt="bus"
+                        className="mx-auto my-5 opacity-80"
+                        width={300}
+                        height={300}
+                      />
+                      <h3 className="text-2xl font-bold text-center">
+                        No Bookings Available
+                      </h3>
+                      <p className="text-center text-gray-600">
+                        Begin planning your next journey with ease today
+                      </p>
+                      <Link href="/" className="flex justify-center">
+                        <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
+                          Search
+                        </button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="pending">
