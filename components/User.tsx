@@ -28,8 +28,8 @@ function User({ userData }: { userData: userData | null }) {
       <DropdownMenu>
         <DropdownMenuTrigger className="outline-none">
           <div className="flex gap-2 items-center">
-            <span className="w-8 h-8 rounded-full grid place-content-center ring-1 ring-black/80 bg-white">
-              <UserCircle className="w-5 h-5 text-primary-color font-bold" />
+            <span className="h-6 w-6 md:w-8 md:h-8 rounded-full grid place-content-center ring-1 ring-black/80 bg-white">
+              <UserCircle className=" w-4 h-4 md:w-5 md:h-5 text-primary-color font-bold" />
             </span>
             <FaAngleDown className="w-4 h-4 text-white " />
           </div>

@@ -39,7 +39,7 @@ function Header() {
           <div className="logo">
             {/* logo */}
             <Link href={"/"}>
-              <Image src={logo} alt="logo" width={150} height={80} />
+              <Image src={logo} alt="logo" width={150} height={80} className="w-[100px] md:w-[150px]" />
             </Link>
           </div>
           <nav className="w-100 text-center hidden md:block">
@@ -53,20 +53,20 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/about"
                   className="text-sm md:text-base xl:text-xl uppercase font-medium text-white hover:text-slate-950 duration-300 transition-all"
                 >
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/contact"
                   className="text-sm md:text-base xl:text-xl uppercase font-medium text-white hover:text-slate-950 duration-300 transition-all"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -75,7 +75,7 @@ function Header() {
             <div className="flex items-center md:hidden ">
               <Sheet>
                 <SheetTrigger>
-                  <FaBars className="h-8 w-8 text-white"/>
+                  <FaBars className="h-6 w-6 text-white"/>
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
@@ -104,20 +104,20 @@ function Header() {
                       </Link>
                     </li>
                     <li className="hover:bg-[#E0115F] group px-2 py-1 duration-300 transition-all">
-                      <a
+                      <Link
                         href="/about"
                         className="text-sm md:text-base xl:text-xl uppercase font-medium group-hover:text-white text-slate-950 duration-300 transition-all"
                       >
                         About
-                      </a>
+                      </Link>
                     </li>
                     <li className="hover:bg-[#E0115F] group px-2 py-1 duration-300 transition-all">
-                      <a
+                      <Link
                         href="/contact"
                         className="text-sm md:text-base xl:text-xl uppercase font-medium group-hover:text-white text-slate-950 duration-300 transition-all"
                       >
                         Contact
-                      </a>
+                      </Link>
                     </li>
                     <Link
                       href="/login"
