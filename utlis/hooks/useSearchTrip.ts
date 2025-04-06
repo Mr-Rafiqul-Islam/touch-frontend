@@ -1,19 +1,27 @@
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query"; 
 import api from "../api";
 
-export const useSearchTrip = () => {
-    return useMutation<
-      { from_location_id: string; to_location_id: string; date: string },
-      Error,
-      { from_location_id: string; to_location_id: string; date: string }
-    >({
-      mutationFn: async (data: {
-        from_location_id: string;
-        to_location_id: string;
-        date: string;
-      }) => {
-        const response = await api.post("/search-bus", data);
-        return response.data;
-      },
-    });
-  };
+export const useSearchTrip = ({
+  from_location_id,
+  to_location_id,
+  date,
+}: {
+  from_location_id: string;
+  to_location_id: string;
+  date: string;
+}) => {
+  return useQuery({
+    queryKey: ['searchTrip', from_location_id, to_location_id, date],
+    queryFn: async () => {
+      const response = await api.get("/search-bus", {
+        params: {
+          from_location_id,
+          to_location_id,
+          date,
+        },
+      });
+      return response.data;
+    },
+    enabled: !!from_location_id && !!to_location_id && !!date, // prevent auto-fire
+  });
+};

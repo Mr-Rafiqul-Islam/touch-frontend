@@ -60,7 +60,6 @@ const {
     label: loc.name,
   }));
   // console.log(locations);
-  const { mutate, status, error: searchError } = useSearchTrip();
   const { setData } = useSearchContext();
   const handleSearch = () => {
     if (!from || !to || !journeyDate) {
@@ -70,23 +69,9 @@ const {
     const formattedFrom = from.replace(/\s+/g, "-");
     const formattedTo = to.replace(/\s+/g, "-");
     const formattedDate = format(journeyDate, "yyyy-MM-dd"); 
-    router.push(`/search/${formattedFrom}/${formattedTo}/${formattedDate}`);
+    router.push(`/search/${fromId}/${toId}/${formattedDate}`);
     
-    mutate({
-      from_location_id: fromId,
-      to_location_id: toId,
-      date: formattedDate,
-    }, {
-      onSuccess: (data) => {
-        // console.log(data, "TRIP DATA");
-        setData(data); // Store data in context
-        console.log(data);
-        return data;
-      },
-      onError: (error) => {
-        console.error(error);
-      },
-    });
+    
   };
 
   return (
