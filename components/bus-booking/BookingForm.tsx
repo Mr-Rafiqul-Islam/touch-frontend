@@ -53,7 +53,7 @@ export default function BookingForm() {
           progress: undefined,
           theme: "light",
           transition: Bounce, // Redirect to the verify page on success
-          onClose: () => router.push("/my-booking"),
+          onClose: () => window.location.href = "/my-booking",
         });
       },
       onError: (error: any) => {
