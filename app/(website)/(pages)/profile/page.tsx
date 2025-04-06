@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Settings, User } from "lucide-react";
 import { useLogout, useFetchUser } from "@/utlis/hooks/useAuth";
 import ProfileDataSkeleton from "@/components/skeletons/ProfileDataSkeleton";
-import SettingsDataSkeleton from "@/components/skeletons/SettingsDataSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import UpdatePassForm from "./UpdatePassForm";
 
