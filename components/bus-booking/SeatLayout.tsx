@@ -1,6 +1,5 @@
 import { Seats } from "@/types";
-import React from "react";
-
+import React, { useState, useEffect } from "react";
 
 interface SeatLayoutProps {
   seats: Seats[];
@@ -11,7 +10,7 @@ interface SeatLayoutProps {
   maxSeats: number;
 }
 
-const  SeatLayout: React.FC<SeatLayoutProps> = ({
+const SeatLayout: React.FC<SeatLayoutProps> = ({
   seats,
   vehicle_category,
   bookedSeats,
@@ -19,8 +18,17 @@ const  SeatLayout: React.FC<SeatLayoutProps> = ({
   toggleSeat,
   maxSeats,
 }) => {
+  
+  // State to force re-render when seats or bookedSeats change
+  // This is a workaround to ensure the component re-renders when the props change
+  const [renderKey, setRenderKey] = useState(0);
+
+  useEffect(() => {
+    setRenderKey((prev) => prev + 1);
+  }, [seats, bookedSeats]);
+
   return (
-    <>
+    <div key={renderKey}>
       {vehicle_category == "0" ? (
         <div className="px-4">
           <div className="grid grid-cols-2 gap-10 mt-2">
@@ -33,10 +41,12 @@ const  SeatLayout: React.FC<SeatLayoutProps> = ({
                 .map((seat) => (
                   <button
                     key={seat.id}
-                    disabled={bookedSeats.some(s => s.seat_no === seat.seat_no)}
+                    disabled={bookedSeats.some(
+                      (s) => s.seat_no === seat.seat_no
+                    )}
                     onClick={() => toggleSeat(seat.id)}
                     className={`p-2 rounded ${
-                      bookedSeats.some(s => s.seat_no === seat.seat_no)
+                      bookedSeats.some((s) => s.seat_no === seat.seat_no)
                         ? "bg-red-500 text-white opacity-50 cursor-not-allowed"
                         : selectedSeats.includes(seat.id) &&
                           selectedSeats.length <= maxSeats
@@ -62,10 +72,12 @@ const  SeatLayout: React.FC<SeatLayoutProps> = ({
                 .map((seat, i) => (
                   <button
                     key={seat.id}
-                    disabled={bookedSeats.some(s => s.seat_no === seat.seat_no)}
+                    disabled={bookedSeats.some(
+                      (s) => s.seat_no === seat.seat_no
+                    )}
                     onClick={() => toggleSeat(seat.id)}
                     className={`p-2 rounded ${
-                      bookedSeats.some(s => s.seat_no === seat.seat_no)
+                      bookedSeats.some((s) => s.seat_no === seat.seat_no)
                         ? "bg-red-500 text-white opacity-50 cursor-not-allowed"
                         : selectedSeats.includes(seat.id) &&
                           selectedSeats.length <= maxSeats
@@ -95,10 +107,12 @@ const  SeatLayout: React.FC<SeatLayoutProps> = ({
                   .map((seat) => (
                     <button
                       key={seat.id}
-                      disabled={bookedSeats.some(s => s.seat_no === seat.seat_no)}
+                      disabled={bookedSeats.some(
+                        (s) => s.seat_no === seat.seat_no
+                      )}
                       onClick={() => toggleSeat(seat.id)}
                       className={`w-full p-2 rounded ${
-                        bookedSeats.some(s => s.seat_no === seat.seat_no)
+                        bookedSeats.some((s) => s.seat_no === seat.seat_no)
                           ? "bg-red-500 text-white opacity-50 cursor-not-allowed"
                           : selectedSeats.includes(seat.id) &&
                             selectedSeats.length <= maxSeats
@@ -127,10 +141,12 @@ const  SeatLayout: React.FC<SeatLayoutProps> = ({
                 .map((seat) => (
                   <button
                     key={seat.id}
-                    disabled={bookedSeats.some(s => s.seat_no === seat.seat_no)}
+                    disabled={bookedSeats.some(
+                      (s) => s.seat_no === seat.seat_no
+                    )}
                     onClick={() => toggleSeat(seat.id)}
                     className={`w-full p-2 rounded ${
-                      bookedSeats.some(s => s.seat_no === seat.seat_no)
+                      bookedSeats.some((s) => s.seat_no === seat.seat_no)
                         ? "bg-red-500 text-white opacity-50 cursor-not-allowed"
                         : selectedSeats.includes(seat.id) &&
                           selectedSeats.length <= maxSeats
@@ -150,7 +166,7 @@ const  SeatLayout: React.FC<SeatLayoutProps> = ({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

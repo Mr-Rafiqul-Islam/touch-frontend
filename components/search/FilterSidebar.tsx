@@ -46,7 +46,7 @@ const FilterSidebar = ({className}: {className?: string}) => {
   };
 
   return (
-    <aside className={cn("w-64 p-4 bg-gray-100 shadow-md lg:block hidden",className)}>
+    <aside className={cn("w-64 p-4 bg-gray-100 shadow-md lg:block hidden min-h-[450px]",className)}>
       <div className="flex justify-between">
         <h3 className="font-bold text-xl mb-4">Filters</h3>
         <Button
