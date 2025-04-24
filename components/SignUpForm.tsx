@@ -157,30 +157,7 @@ const SignUpForm = () => {
           </h3>
         </div>
 
-        {/* Third Party Authentication Options */}
-        <div
-          id="third-party-auth"
-          className="flex items-center justify-center mt-5 flex-wrap"
-        >
-          <button className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1">
-            <Image
-              className="max-w-[25px]"
-              src="/google.svg"
-              alt="Google"
-              width={30}
-              height={30}
-            />
-          </button>
-          <button className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1">
-            <Image
-              className="max-w-[25px]"
-              src="facebook.svg"
-              alt="Facebook"
-              width={30}
-              height={30}
-            />
-          </button>
-        </div>
+        
         <div className="text-gray-500 flex text-center flex-col mt-4 items-center text-sm">
           <p className="cursor-default">
             By signing in, you agree to our{" "}

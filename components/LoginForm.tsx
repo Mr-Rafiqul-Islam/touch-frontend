@@ -144,7 +144,7 @@ const LoginForm = () => {
         </div>
 
         {/* Third Party Authentication Options */}
-        <div
+        {/* <div
           id="third-party-auth"
           className="flex items-center justify-center mt-5 flex-wrap"
         >
@@ -166,7 +166,7 @@ const LoginForm = () => {
               height={30}
             />
           </button>
-        </div>
+        </div> */}
         <div className="text-gray-500 flex text-center flex-col mt-4 items-center text-sm">
           <p className="cursor-default">
             By signing in, you agree to our{" "}
