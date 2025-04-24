@@ -75,7 +75,11 @@ function SeatBooking({
       );
       router.push("/booking");
     } else {
-      toast.error("Please login to continue");
+      toast.error("Please login to continue", {
+        onClose: () => {
+          router.push("/login");
+        },
+      });
     }
   }
   return (
