@@ -21,7 +21,7 @@ const MyBooking = () => {
   );
 
   useEffect(() => {
-    setBookingList(data?.data ?? []);
+    setBookingList(data?.data?.slice().reverse() ?? []);
   }, [data]);
 
   // for switching tabs
