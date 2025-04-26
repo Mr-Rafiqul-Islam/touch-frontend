@@ -1,11 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../api";
 import queryClient from "../queryClient";
+import { deleteCookie, setCookie } from "@/lib/helper";
 
 // Set token and email in local storage
 const setAuthData = (token: string, email: string) => {
   localStorage.setItem("authToken", token);
   localStorage.setItem("registeredEmail", email);
+  setCookie("authToken", token);
+  setCookie("registeredEmail", email);
 };
 const setRegisteredEmail = (email: string) => {
   localStorage.setItem("registeredEmail", email);
@@ -25,6 +28,8 @@ const removeAuthData = () => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("registeredEmail");
   localStorage.removeItem("user_id");
+  deleteCookie("authToken");
+  deleteCookie("registeredEmail");
 };
 
 // Sign up mutation
@@ -79,7 +84,7 @@ export const useResend = () => {
 // Login mutation
 export const useLogin = () => {
   return useMutation<
-    { email: string; password: string },
+    { email: string; password: string; token: string},
     Error,
     { email: string; password: string }
   >({
