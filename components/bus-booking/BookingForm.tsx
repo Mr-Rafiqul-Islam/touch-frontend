@@ -75,9 +75,9 @@ export default function BookingForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 grid grid-cols-3 gap-6">
+    <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
       {/* Passenger Details */}
-      <div className="col-span-2">
+      <div className="sm:col-span-2">
       <ToastContainer
         position="top-right"
         autoClose={1500}
@@ -91,13 +91,13 @@ export default function BookingForm() {
         theme="light"
         transition={Bounce}
       />
-        <Card>
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>Passenger Details</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="passenger_name">Passenger Name</Label>
                   <Input
@@ -151,8 +151,8 @@ export default function BookingForm() {
       </div>
 
       {/* Ticket Info */}
-      <aside className="col-span-1">
-        <Card>
+      <div className="sm:col-span-1 w-full">
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>Trip Information</CardTitle>
           </CardHeader>
@@ -181,7 +181,7 @@ export default function BookingForm() {
             </div>
           </CardContent>
         </Card>
-      </aside>
+      </div>
     </div>
   );
 }
