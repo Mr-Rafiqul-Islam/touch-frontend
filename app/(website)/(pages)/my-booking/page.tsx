@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatTime, formatDate } from "@/lib/helper";
+import { formatTime, formatDate, handleDownloadPDF} from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { BookingList } from "@/types";
 import { useMyBooking } from "@/utlis/hooks/useFetchLocations";
@@ -13,9 +13,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const MyBooking = () => {
-
-
-  const { data,isLoading } = useMyBooking();
+  const { data, isLoading } = useMyBooking();
   const [bookingList, setBookingList] = useState<BookingList[] | []>(
     data?.data ?? []
   );
@@ -24,7 +22,6 @@ const MyBooking = () => {
     setBookingList(data?.data?.slice().reverse() ?? []);
   }, [data]);
 
-  // for switching tabs
   const [activeTab, setActiveTab] = useState("all");
 
   const filterOptions = ["2025", "2024"];
@@ -32,13 +29,10 @@ const MyBooking = () => {
   const initialFilters = Object.fromEntries(
     filterOptions.map((option) => [option, false])
   );
-  // State to store selected filters
   const [filters, setFilters] = useState(initialFilters);
 
-  // Check if any filter is selected
   const isAnyFilterChecked = Object.values(filters).some((checked) => checked);
 
-  // Handle checkbox change
   const handleCheckboxChange = (id: keyof typeof filters) => {
     setFilters((prev) => ({
       ...prev,
@@ -46,13 +40,13 @@ const MyBooking = () => {
     }));
   };
 
-  // Reset all filters
   const handleReset = () => {
     setFilters({
       2025: false,
       2024: false,
     });
   };
+
 
   return (
     <div className="container py-10">
@@ -82,7 +76,6 @@ const MyBooking = () => {
       <hr className="my-4 h-[2px] bg-primary-color" />
 
       <div className="flex flex-col md:flex-row gap-4">
-        {/* side bar */}
         <aside className="w-full md:w-1/4 rounded-lg overflow-hidden">
           <Card className="p-4">
             <CardContent>
@@ -113,7 +106,7 @@ const MyBooking = () => {
                       className="data-[state=checked]:bg-primary-color data-[state=checked]:border-primary-color"
                     />
                     <Label htmlFor={year} className="cursor-pointer capitalize">
-                      {year.replace(/([A-Z])/g, " $1").trim()}
+                      {year.replace(/([A-Z])/g, " \$1").trim()}
                     </Label>
                   </p>
                 ))}
@@ -128,80 +121,78 @@ const MyBooking = () => {
                 <div>
                   {isLoading ? (
                     <>
-                    <Skeleton className="h-20 w-full rounded-lg" />
-                    <Skeleton className="h-20 w-full rounded-lg" /> 
+                      <Skeleton className="h-20 w-full rounded-lg" />
+                      <Skeleton className="h-20 w-full rounded-lg" />
                     </>
-                  ):(
+                  ) : (
                     <div>
-                    {bookingList?.length > 0 ? (
-                      <div>
-                        {bookingList.map((item) => (
-                          <div key={item.id} className="border-b mb-2">
-                            <h2 className="text-xl text-primary-color font-bold">{item.company?.name}</h2>
-                            <div className="flex gap-2 my-2">
-                              <span>
-                                {item?.trip?.route?.from_location?.name}
-                              </span>{" "}
-                              To{" "}
-                              <span>{item?.trip?.route?.to_location?.name},</span>
+                      {bookingList?.length > 0 ? (
+                        <div>
+                          {bookingList.map((item) => (
+                            <div key={item.id} className="border-b mb-2 ">
+                              <h2 className="text-xl text-primary-color font-bold">
+                                {item.company?.name}
+                              </h2>
+                              <div className="flex gap-2 my-2">
+                                <span>{item?.trip?.route?.from_location?.name}</span>{" "}
+                                To{" "}
+                                <span>{item?.trip?.route?.to_location?.name},</span>
+                              </div>
+                              <div className="flex gap-2 my-2">
+                                <strong>Departure :</strong>
+                                <span>{formatDate(item?.trip?.start_date)}</span>{" "}
+                                |{" "}
+                                <span>{formatTime(item?.trip?.start_time)},</span>
+                              </div>
+                              <div className="flex gap-2 my-2">
+                                <strong>Seat :</strong>
+                                <span className="flex gap-2">
+                                  {item?.seat_data?.map((seat) => (
+                                    <p key={seat.seatNo}>{seat.seatNo},</p>
+                                  ))}
+                                </span>
+                              </div>
+                              <div className="flex gap-2 my-2">
+                                <strong>Total Price :</strong>
+                                <span className="flex gap-2">{`${item?.trip?.ticket_price}BDT x${item?.seat_data?.length} = ${
+                                  (Number(item?.trip?.ticket_price) || 0) * (item?.seat_data?.length || 0)
+                                }BDT`}</span>
+                              </div>
+                              <div className="my-2 text-start md:text-end">
+                                <Button
+                                  variant="default"
+                                  className="bg-primary-color text-white transition-all duration-300"
+                                  size="sm"
+                                  onClick={() => handleDownloadPDF(item)}
+                                >
+                                  Download Ticket
+                                </Button>
+                              </div>
                             </div>
-                            <div className="flex gap-2 my-2">
-                              <strong>Departure :</strong>
-                              <span>
-                              {formatDate(item?.trip?.start_date)} 
-                              </span>{" "}
-                              |{" "}
-                              <span>
-                              {formatTime(item?.trip?.start_time)},</span>
-                            </div>
-                            <div className="flex gap-2 my-2">
-                              <strong>Seat :</strong>
-                              <span className="flex gap-2">
-                                {item?.seat_data?.map((seat)=> (
-                                  <p>
-                                    {seat.seatNo},
-                                  </p>
-                                ))}
-                              </span>
-                            </div>
-                            <div className="flex gap-2 my-2">
-                              <strong>Total Price :</strong>
-                              <span className="flex gap-2">
-                                {`${item?.trip?.ticket_price}BDT x${ item?.seat_data?.length} = ${ item?.trip?.ticket_price * item?.seat_data?.length}BDT`}
-                              </span>
-                            </div>
-                            <div className="my-2 text-start md:text-end">
-                            <Button
-                              variant="default"
-                              className="bg-primary-color text-white transition-all duration-300"
-                              size="sm"
-                              >Download Ticket</Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="all">
-                        <Image
-                          src="/city bus-bro.svg"
-                          alt="bus"
-                          className="mx-auto my-5 opacity-80"
-                          width={300}
-                          height={300}
-                        />
-                        <h3 className="text-2xl font-bold text-center">
-                          No Bookings Available
-                        </h3>
-                        <p className="text-center text-gray-600">
-                          Begin planning your next journey with ease today
-                        </p>
-                        <Link href="/" className="flex justify-center">
-                          <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
-                            Search
-                          </button>
-                        </Link>
-                      </div>
-                    )}
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="all">
+                          <Image
+                            src="/city bus-bro.svg"
+                            alt="bus"
+                            className="mx-auto my-5 opacity-80"
+                            width={300}
+                            height={300}
+                          />
+                          <h3 className="text-2xl font-bold text-center">
+                            No Bookings Available
+                          </h3>
+                          <p className="text-center text-gray-600">
+                            Begin planning your next journey with ease today
+                          </p>
+                          <Link href="/" className="flex justify-center">
+                            <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
+                              Search
+                            </button>
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -218,8 +209,7 @@ const MyBooking = () => {
                     You don't have any bookings waiting to happen
                   </h3>
                   <p className="text-center text-gray-600">
-                    But it's never too late to book your next comfortable and
-                    easy journey!
+                    But it's never too late to book your next comfortable and easy journey!
                   </p>
                   <Link href="/" className="flex justify-center">
                     <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
