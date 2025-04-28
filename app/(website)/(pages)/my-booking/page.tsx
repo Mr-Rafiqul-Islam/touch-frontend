@@ -147,7 +147,7 @@ const MyBooking = () => {
                               <div className="flex gap-2 my-2">
                                 <strong>Seat :</strong>
                                 <span className="flex gap-2">
-                                  {item?.seat_data?.map((seat) => (
+                                  {item?.seat_data?.toSorted((a,b)=> a.seatId - b.seatId ).map((seat) => (
                                     <p key={seat.seatNo}>{seat.seatNo},</p>
                                   ))}
                                 </span>

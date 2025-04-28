@@ -118,7 +118,7 @@ export const handleDownloadPDF = (booking: BookingList) => {
   );
   leftY += 7;
   doc.text(
-    `Seat: ${booking.seat_data.map((seat) => seat.seatNo).join(", ")}`,
+    `Seat: ${booking.seat_data?.toSorted((a,b)=> a.seatId - b.seatId ).map((seat) => seat.seatNo).join(", ")}`,
     marginLeft,
     leftY
   );
@@ -148,7 +148,7 @@ export const handleDownloadPDF = (booking: BookingList) => {
   rightY += 7;
   doc.text(`End Date & Time: ${formatDate(booking.trip?.end_date)}, ${formatTime(booking.trip?.end_time)}`, rightX, rightY);
   rightY += 7;
-  doc.text(`Seat: ${booking.seat_data.map((seat) => seat.seatNo).join(", ")}`, rightX, rightY);
+  doc.text(`Seat: ${booking.seat_data?.toSorted((a,b)=> a.seatId - b.seatId ).map((seat) => seat.seatNo).join(", ")}`, rightX, rightY);
   rightY += 7;
   doc.text(
     `Price: ${formatBDT(booking.trip?.ticket_price)} BDT X ${booking.seat_data?.length ?? 0}`,
