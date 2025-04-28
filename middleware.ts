@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  console.log("Middleware triggered", req.nextUrl.pathname);
+  // console.log("Middleware triggered", req.nextUrl.pathname);
 
   const token = req.cookies.get("authToken")?.value;
-  console.log("Token from cookies:", token);
+  // console.log("Token from cookies:", token);
 
   const protectedPaths = ["/booking", "/my-booking", "/profile"];
   const authPages = ["/login", "/signup", "/forget-password", "/verify"];
