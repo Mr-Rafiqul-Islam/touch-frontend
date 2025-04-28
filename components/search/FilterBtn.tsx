@@ -8,7 +8,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import FilterSidebar from "./FilterSidebar";
-function FilterBtn() {
+
+interface FilterSidebarProps {
+  filters: Record<string, boolean>;
+  onCheckboxChange: (id: string) => void;
+  onReset: () => void;
+}
+function FilterBtn({ filters, onCheckboxChange, onReset }: FilterSidebarProps) {
   return (
     <>
       <Sheet>
@@ -20,10 +26,17 @@ function FilterBtn() {
         <SheetContent side="left">
           <SheetHeader>
             <SheetTitle>
-                <p className="text-sm my-3 text-gray-800">Select Your Filter Options</p>
+              <p className="text-sm my-3 text-gray-800">
+                Select Your Filter Options
+              </p>
             </SheetTitle>
           </SheetHeader>
-          <FilterSidebar className="block lg:hidden w-full bg-transparent shadow-none"/>
+          <FilterSidebar
+            filters={filters}
+            onCheckboxChange={onCheckboxChange}
+            onReset={onReset}
+            className="block lg:hidden w-full bg-transparent shadow-none"
+          />
         </SheetContent>
       </Sheet>
     </>
