@@ -231,6 +231,7 @@ export type BookingList = {
     is_registration_by: string | null;
     created_at: string;
     updated_at: string;
+    site_setting: SiteSetting;
   };
   trip: {
     id: number;
@@ -278,6 +279,26 @@ export type BookingList = {
         district_id: number;
         name: string;
         status: number;
+        created_at: string;
+        updated_at: string;
+      };
+      start_counter: {
+        id: number;
+        company_id: number;
+        name: string;
+        counter_no: string | null;
+        location_id: number;
+        status: string;
+        created_at: string;
+        updated_at: string;
+      };
+      end_counter: {
+        id: number;
+        company_id: number;
+        name: string;
+        counter_no: string | null;
+        location_id: number;
+        status: string;
         created_at: string;
         updated_at: string;
       };
