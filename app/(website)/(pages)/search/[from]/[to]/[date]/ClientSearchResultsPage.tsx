@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import Trip from "@/components/search/Trip";
 import SearchBar from "@/components/SearchBar";
 import FilterSidebar from "@/components/search/FilterSidebar";
 import SortOptions from "@/components/search/SortOptions";
 import FilterBtn from "@/components/search/FilterBtn";
+import { useSearchContext } from "@/utlis/provider/SearchProvider";
 
 const filterOptions = [
   "Ac",
@@ -27,6 +28,16 @@ export default function ClientSearchResultsPage({
   to,
   date,
 }: ClientSearchResultsPageProps) {
+
+const { setData } = useSearchContext();
+useEffect(() => {
+    setData({
+      fromId: from,
+      toId: to,
+      journeyDate: new Date(date),
+    });
+  }, [from, to, date, setData]);
+
   const initialFilters = Object.fromEntries(
     filterOptions.map((option) => [option, false])
   );
@@ -45,7 +56,9 @@ export default function ClientSearchResultsPage({
 
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
-      <SearchBar />
+      <SearchBar initialFromId={from}
+        initialToId={to}
+        initialDate={new Date(date)}/>
       <section className="py-1">
         <div className="search-container min-h-[450px]">
           <div className="flex">

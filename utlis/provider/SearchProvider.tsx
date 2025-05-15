@@ -1,14 +1,27 @@
-import { createContext, useContext, useState } from "react";
+// utlis/provider/SearchProvider.tsx
+"use client";
 
-interface SearchResult {
-  data: any | null;
-  setData: (data: any) => void;
+import React, { createContext, useContext, useState, ReactNode } from "react";
+
+interface SearchData {
+  fromId: string;
+  toId: string;
+  journeyDate: Date | undefined;
 }
 
-const SearchContext = createContext<SearchResult | undefined>(undefined);
+interface SearchContextType {
+  data: SearchData;
+  setData: (data: SearchData) => void;
+}
 
-export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
-  const [data, setData] = useState<any | null>(null);
+const SearchContext = createContext<SearchContextType | undefined>(undefined);
+
+export const SearchProvider = ({ children }: { children: ReactNode }) => {
+  const [data, setData] = useState<SearchData>({
+    fromId: "",
+    toId: "",
+    journeyDate: undefined,
+  });
 
   return (
     <SearchContext.Provider value={{ data, setData }}>
@@ -20,7 +33,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
 export const useSearchContext = () => {
   const context = useContext(SearchContext);
   if (!context) {
-    throw new Error("useSearchContext must be used within a SearchProvider");
+    throw new Error("useSearchContext must be used within SearchProvider");
   }
   return context;
 };

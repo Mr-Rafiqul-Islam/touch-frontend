@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DatePicker } from "./ui/datepicker";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -21,57 +21,105 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useFetchLocations } from "@/utlis/hooks/useFetchLocations";
-import { useSearchTrip } from "@/utlis/hooks/useSearchTrip";
 import { format } from "date-fns";
 import { useSearchContext } from "@/utlis/provider/SearchProvider";
-import { useForm } from "react-hook-form";
 
-interface searchTripvalues {
-  from_location_id: number;
-  to_location_id: number;
-  date: string;
+interface Location {
+  id: string;
+  value: string;
+  label: string;
 }
-function SearchBar() {
-  
-const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<searchTripvalues>();
 
+interface SearchBarProps {
+  initialFromId?: string;
+  initialToId?: string;
+  initialDate?: Date;
+}
 
-  const [tripType, setTripType] = useState("oneWay");
-  const [from, setFrom] = useState("");
-  const [fromId, setFromId] = useState('');
-  const [to, setTo] = useState("");
-  const [toId, setToId] = useState('');
-  const [journeyDate, setJourneyDate] = useState<Date | undefined>();
-  const [returnDate, setReturnDate] = useState<Date | undefined>();
+function SearchBar({
+  initialFromId = "",
+  initialToId = "",
+  initialDate,
+}: SearchBarProps) {
   const router = useRouter();
+  const { data: searchData, setData } = useSearchContext();
+
+  const { fromId, toId, journeyDate } = searchData;
 
   const { data, error, isLoading } = useFetchLocations();
   const locationArray = data?.locations;
 
-  // console.log(locationArray, "lcation from API response");
+  // Map locations for easier lookup with explicit types
+  const locations: Location[] | undefined = locationArray?.map(
+    (loc: { id: number; name: string }) => ({
+      id: loc.id.toString(),
+      value: loc.name.toLowerCase().replace(/\s+/g, ""),
+      label: loc.name,
+    })
+  );
 
-  const locations = locationArray?.map((loc: any) => ({
-    id: loc.id,
-    value: loc.name.toLowerCase().replace(/\s+/g, ""),
-    label: loc.name,
-  }));
-  // console.log(locations);
-  const { setData } = useSearchContext();
+  // Local state for the strings that show in the button
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [tripType, setTripType] = useState("oneWay");
+  const [returnDate, setReturnDate] = useState<Date | undefined>();
+
+  // Sync local "from" string when fromId or locations change
+  useEffect(() => {
+    if (locations && fromId) {
+      const loc = locations.find((loc: Location) => loc.id === fromId);
+      if (loc) setFrom(loc.value);
+    }
+  }, [fromId, locations]);
+
+  // Sync local "to" string when toId or locations change
+  useEffect(() => {
+    if (locations && toId) {
+      const loc = locations.find((loc: Location) => loc.id === toId);
+      if (loc) setTo(loc.value);
+    }
+  }, [toId, locations]);
+
+  // On mount, if initial props given and context empty, initialize context state
+  useEffect(() => {
+    if ((!fromId || !toId) && locations) {
+      if (initialFromId) {
+        const loc = locations.find((loc: Location) => loc.id === initialFromId);
+        if (loc) {
+          setData((prev: typeof searchData) => ({ ...prev, fromId: loc.id }));
+        }
+      }
+      if (initialToId) {
+        const loc = locations.find((loc: Location) => loc.id === initialToId);
+        if (loc) {
+          setData((prev: typeof searchData) => ({ ...prev, toId: loc.id }));
+        }
+      }
+      if (initialDate) {
+        setData((prev: typeof searchData) => ({
+          ...prev,
+          journeyDate: initialDate,
+        }));
+      }
+    }
+  }, [
+    initialFromId,
+    initialToId,
+    initialDate,
+    fromId,
+    toId,
+    locations,
+    setData,
+    searchData,
+  ]);
+
   const handleSearch = () => {
-    if (!from || !to || !journeyDate) {
+    if (!fromId || !toId || !journeyDate) {
       alert("Please fill in all required fields!");
       return;
     }
-    const formattedFrom = from.replace(/\s+/g, "-");
-    const formattedTo = to.replace(/\s+/g, "-");
-    const formattedDate = format(journeyDate, "yyyy-MM-dd"); 
+    const formattedDate = format(journeyDate, "yyyy-MM-dd");
     router.push(`/search/${fromId}/${toId}/${formattedDate}`);
-    
-    
   };
 
   return (
@@ -94,6 +142,7 @@ const {
           </RadioGroup>
           <div className="flex flex-col p-2 bg-white gap-4 xl:flex-row xl:py-4 rounded-lg xl:items-center xl:justify-around max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* From */}
               <div>
                 <Label>From</Label>
                 <Popover>
@@ -104,8 +153,7 @@ const {
                       className="w-full justify-between"
                     >
                       {from
-                        ? locations?.find((loc: any) => loc.value === from)
-                            ?.label
+                        ? locations?.find((loc) => loc.value === from)?.label
                         : "Select location..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -116,12 +164,12 @@ const {
                       <CommandList>
                         <CommandEmpty>No location found.</CommandEmpty>
                         <CommandGroup>
-                          {locations?.map((location: any) => (
+                          {locations?.map((location: Location) => (
                             <CommandItem
                               key={location.value}
                               onSelect={() => {
                                 setFrom(location.value);
-                                setFromId(location.id);
+                                setData({ ...searchData, fromId: location.id });
                               }}
                               value={location.value}
                             >
@@ -142,6 +190,7 @@ const {
                   </PopoverContent>
                 </Popover>
               </div>
+              {/* To */}
               <div>
                 <Label>To</Label>
                 <Popover>
@@ -152,7 +201,7 @@ const {
                       className="w-full justify-between"
                     >
                       {to
-                        ? locations?.find((loc: any) => loc.value === to)?.label
+                        ? locations?.find((loc) => loc.value === to)?.label
                         : "Select location..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -163,12 +212,12 @@ const {
                       <CommandList>
                         <CommandEmpty>No location found.</CommandEmpty>
                         <CommandGroup>
-                          {locations?.map((location: any) => (
+                          {locations?.map((location: Location) => (
                             <CommandItem
                               key={location.value}
                               onSelect={() => {
                                 setTo(location.value);
-                                setToId(location.id);
+                                setData({ ...searchData, toId: location.id });
                               }}
                               value={location.value}
                             >
@@ -191,15 +240,17 @@ const {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Journey Date */}
               <div>
                 <Label>Journey Date</Label>
                 <DatePicker
                   selected={journeyDate}
-                  onSelect={setJourneyDate}
+                  onSelect={(date) => setData({ ...searchData, journeyDate: date })}
                   placeholder="Pick A Date"
                   className="w-full"
                 />
               </div>
+              {/* Return Date only if round trip */}
               {tripType !== "oneWay" && (
                 <div>
                   <Label>Return Date</Label>
