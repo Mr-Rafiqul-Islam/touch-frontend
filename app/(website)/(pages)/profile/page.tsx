@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Pencil, Settings, User } from "lucide-react";
@@ -7,29 +7,65 @@ import { useLogout, useFetchUser } from "@/utlis/hooks/useAuth";
 import ProfileDataSkeleton from "@/components/skeletons/ProfileDataSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import UpdatePassForm from "./UpdatePassForm";
+import { useUpdateProfile } from "@/utlis/hooks/useResetPassword";
+
+interface UpdateFormValues {
+  name: string;
+  email: string;
+  phone: string;
+}
 
 const Profile = () => {
-  // for fetching data
+  // For fetching data
   const { data: user, isLoading, refetch } = useFetchUser();
-  console.log(user?.user);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user ? user?.user.name : "N/A",
-    email: user ? user?.user.email : "N/A",
-    phone: user ? user?.user.phone : "N/A",
+  // Controlled state for form data
+  const [formData, setFormData] = useState<UpdateFormValues>({
+    name: "",
+    email: "",
+    phone: "",
   });
-  const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => setIsEditing(false);
+
+  // When user data loads, initialize formData state
+  useEffect(() => {
+    if (user?.user) {
+      setFormData({
+        name: user.user.name || "",
+        email: user.user.email || "",
+        phone: user.user.phone || "",
+      });
+    }
+  }, [user]);
+
+  // Editing state
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Update mutation
+  const { mutate, status, error } = useUpdateProfile();
+
+  // Save handler - sends formData to backend
   const handleSave = () => {
-    console.log("Updated Data:", formData);
-    setIsEditing(false);
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    mutate(formData, {
+      onSuccess: () => {
+        setIsEditing(false);
+        refetch();
+      },
+      onError: (error: any) => {
+        console.log(error.response?.data?.message || error.message);
+      },
+    });
   };
 
-  // for smooth scroll
+  // Input change handler to update formData state
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // For smooth scroll
   const profileRef = useRef<HTMLDivElement>(null);
   const settingsRef = useRef<HTMLDivElement>(null);
 
@@ -37,14 +73,14 @@ const Profile = () => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // for logout
+  // Logout logic
   const { mutate: logout } = useLogout();
   const handleLogout = async () => {
-    console.log("logout");
     logout();
-    // Redirect to the login page
     window.location.href = "/login";
   };
+  // Get the first letter of the user's name
+  const firstLetterOfName = user?.user?.name ? user.user.name[0].toUpperCase() : '';
 
   return (
     <div className="container py-10">
@@ -58,7 +94,9 @@ const Profile = () => {
                   <Skeleton className="h-24 w-24 rounded-full" />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-xl text-gray-600">Avatar</span>
+                    <span className="text-5xl font-bold text-gray-600">
+                      {firstLetterOfName}
+                    </span>
                   </div>
                 )}
               </div>
@@ -95,19 +133,28 @@ const Profile = () => {
                   Profile
                   {isEditing ? (
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={handleSave}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={status === "pending"}
+                      >
                         Save
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleCancel}
+                        onClick={() => setIsEditing(false)}
                       >
                         Cancel
                       </Button>
                     </div>
                   ) : (
-                    <Button variant="outline" size="sm" onClick={handleEdit}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditing(true)}
+                    >
                       <Pencil size={16} /> Edit
                     </Button>
                   )}
@@ -122,8 +169,8 @@ const Profile = () => {
                 ) : isEditing ? (
                   <table className="w-full table-fixed">
                     <tbody>
-                      {Object.keys(formData).map((key, index) => (
-                        <tr key={index}>
+                      {Object.entries(formData).map(([key, value]) => (
+                        <tr key={key}>
                           <td className="font-medium text-gray-700 py-2 capitalize">
                             {key.replace(/([A-Z])/g, " $1")}
                           </td>
@@ -131,8 +178,9 @@ const Profile = () => {
                             <input
                               type="text"
                               name={key}
-                              value={(formData as Record<string, string>)[key]}
+                              value={value}
                               onChange={handleChange}
+                              required
                               className="border p-2 rounded-md w-full"
                             />
                           </td>
@@ -143,8 +191,8 @@ const Profile = () => {
                 ) : (
                   <table className="w-full table-fixed">
                     <tbody>
-                      {Object.entries(formData).map(([key, value], index) => (
-                        <tr key={index}>
+                      {Object.entries(formData).map(([key, value]) => (
+                        <tr key={key}>
                           <td className="font-medium text-gray-700 py-2 capitalize">
                             {key.replace(/([A-Z])/g, " $1")}
                           </td>
@@ -153,6 +201,11 @@ const Profile = () => {
                       ))}
                     </tbody>
                   </table>
+                )}
+                {error && (
+                  <p className="mt-2 text-sm text-red-600">
+                    Error updating profile: {error.message}
+                  </p>
                 )}
               </CardContent>
             </Card>
