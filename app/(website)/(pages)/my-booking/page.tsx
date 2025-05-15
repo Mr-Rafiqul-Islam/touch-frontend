@@ -8,9 +8,11 @@ import { formatTime, formatDate, handleDownloadPDF} from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { BookingList } from "@/types";
 import { useMyBooking } from "@/utlis/hooks/useFetchLocations";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { TicketPdf } from "./TicketPdf";
 
 const MyBooking = () => {
   const { data, isLoading } = useMyBooking();
@@ -47,6 +49,13 @@ const MyBooking = () => {
     });
   };
 
+  // for opening a a pdf with new tab
+  // This function will open the PDF in a new tab
+  const openPdfInNewTab = async (booking: BookingList) => {
+    const blob = await pdf(<TicketPdf booking={booking} />).toBlob();
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, "_blank");
+  };
 
   return (
     <div className="container py-10">
@@ -106,7 +115,7 @@ const MyBooking = () => {
                       className="data-[state=checked]:bg-primary-color data-[state=checked]:border-primary-color"
                     />
                     <Label htmlFor={year} className="cursor-pointer capitalize">
-                      {year.replace(/([A-Z])/g, " \$1").trim()}
+                      {year.replace(/([A-Z])/g, " $1").trim()}
                     </Label>
                   </p>
                 ))}
@@ -134,38 +143,59 @@ const MyBooking = () => {
                                 {item.company?.name}
                               </h2>
                               <div className="flex gap-2 my-2">
-                                <span>{item?.trip?.route?.from_location?.name}</span>{" "}
+                                <span>
+                                  {item?.trip?.route?.from_location?.name}
+                                </span>{" "}
                                 To{" "}
-                                <span>{item?.trip?.route?.to_location?.name},</span>
+                                <span>
+                                  {item?.trip?.route?.to_location?.name},
+                                </span>
                               </div>
                               <div className="flex gap-2 my-2">
                                 <strong>Departure :</strong>
-                                <span>{formatDate(item?.trip?.start_date)}</span>{" "}
+                                <span>
+                                  {formatDate(item?.trip?.start_date)}
+                                </span>{" "}
                                 |{" "}
-                                <span>{formatTime(item?.trip?.start_time)},</span>
+                                <span>
+                                  {formatTime(item?.trip?.start_time)},
+                                </span>
                               </div>
                               <div className="flex gap-2 my-2">
                                 <strong>Seat :</strong>
                                 <span className="flex gap-2">
-                                  {item?.seat_data?.toSorted((a,b)=> a.seatId - b.seatId ).map((seat) => (
-                                    <p key={seat.seatNo}>{seat.seatNo},</p>
-                                  ))}
+                                  {item?.seat_data
+                                    ?.toSorted((a, b) => a.seatId - b.seatId)
+                                    .map((seat) => (
+                                      <p key={seat.seatNo}>{seat.seatNo},</p>
+                                    ))}
                                 </span>
                               </div>
                               <div className="flex gap-2 my-2">
                                 <strong>Total Price :</strong>
-                                <span className="flex gap-2">{`${item?.trip?.ticket_price}BDT x${item?.seat_data?.length} = ${
-                                  (Number(item?.trip?.ticket_price) || 0) * (item?.seat_data?.length || 0)
+                                <span className="flex gap-2">{`${
+                                  item?.trip?.ticket_price
+                                }BDT x${item?.seat_data?.length} = ${
+                                  (Number(item?.trip?.ticket_price) || 0) *
+                                  (item?.seat_data?.length || 0)
                                 }BDT`}</span>
                               </div>
                               <div className="my-2 text-start md:text-end">
+                                <PDFDownloadLink
+                                  document={<TicketPdf booking={item} />}
+                                  fileName="ticket.pdf"
+                                >
+                                  {({ loading }) =>
+                                    loading ? "Loading..." : "Download Ticket"
+                                  }
+                                </PDFDownloadLink>
                                 <Button
                                   variant="default"
-                                  className="bg-primary-color text-white transition-all duration-300"
+                                  className="bg-primary-color text-white transition-all duration-300 mx-2"
                                   size="sm"
-                                  onClick={() => handleDownloadPDF(item)}
+                                  onClick={() => openPdfInNewTab(item)}
                                 >
-                                  Download Ticket
+                                  Open Ticket
                                 </Button>
                               </div>
                             </div>
@@ -209,7 +239,8 @@ const MyBooking = () => {
                     You don't have any bookings waiting to happen
                   </h3>
                   <p className="text-center text-gray-600">
-                    But it's never too late to book your next comfortable and easy journey!
+                    But it's never too late to book your next comfortable and
+                    easy journey!
                   </p>
                   <Link href="/" className="flex justify-center">
                     <button className="mt-4 bg-primary-color text-xl text-white py-2 px-6 rounded-full hover:shadow-lg hover:shadow-[#E0115F] transition-all duration-300">
