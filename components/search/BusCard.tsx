@@ -9,8 +9,6 @@ import { formatDate, formatTime, getDuration } from "@/lib/helper";
 const BusCard = ({ trip }: { trip: Trip }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   console.log(trip);
-  const baseurl= process.env.NEXT_PUBLIC_API_URL
-  // console.log(baseurl);
   
   return (
     <div className="border rounded-lg p-4 shadow-sm hover:shadow-md grid grid-cols-1 lg:grid-cols-[1fr_1.5fr_1fr] gap-3 lg:gap-4">

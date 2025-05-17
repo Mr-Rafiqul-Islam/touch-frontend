@@ -19,19 +19,13 @@ import { FaBars } from "react-icons/fa6";
 
 function Header() {
   const { data: user, isLoading, refetch } = useFetchUser();
-  const { mutate: logout } = useLogout();
+  
 
   useEffect(() => {
     refetch();
   }, [user, refetch]);
 
-  const handleLogout = async () => {
-    console.log("logout");
-
-    await logout();
-    // Redirect to the login page
-    window.location.href = "/login";
-  };
+  
   return (
     <header className="py-5 sticky top-0 left-0 z-50 w-full bg-primary-color">
       <div className="container">

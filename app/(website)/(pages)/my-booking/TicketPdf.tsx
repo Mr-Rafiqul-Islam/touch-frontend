@@ -202,6 +202,7 @@ export const TicketPdf: React.FC<TicketPdfProps> = ({ booking }) => {
           <View style={styles.ticket}>
             {/* Background image */}
             <Image
+              alt="Background"
               src={backgroundImage}
               style={[
                 styles.ticketBgImage,

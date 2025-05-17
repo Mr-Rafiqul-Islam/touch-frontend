@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
-import Image from "next/image";
 import queryClient from "@/utlis/queryClient";
 
 interface LoginFormValues {
@@ -131,7 +130,7 @@ const LoginForm = () => {
         </form>
         <div className="flex flex-col mt-4 items-center justify-center text-sm">
           <h3 className="">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               className="group text-blue-400 transition-all duration-100 ease-in-out"
               href="/signup"

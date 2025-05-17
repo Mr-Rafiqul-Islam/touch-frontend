@@ -29,7 +29,6 @@ function UpdatePassForm({
     formState: { errors },
   } = useForm<UpdateFormValues>();
   const [passEditing, setPassEditing] = useState(false);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
   const { mutate, status, error } = useUpdatePassword();
 
   const onSubmit = (data: UpdateFormValues) => {

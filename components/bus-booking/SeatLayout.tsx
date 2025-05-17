@@ -69,7 +69,7 @@ const SeatLayout: React.FC<SeatLayoutProps> = ({
                   (seat) =>
                     seat.seat_no.includes("3") || seat.seat_no.includes("4")
                 )
-                .map((seat, i) => (
+                .map((seat) => (
                   <button
                     key={seat.id}
                     disabled={bookedSeats.some(

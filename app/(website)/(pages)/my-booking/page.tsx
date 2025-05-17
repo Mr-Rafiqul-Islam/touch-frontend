@@ -246,10 +246,10 @@ const MyBooking = () => {
                     height={300}
                   />
                   <h3 className="text-2xl font-bold text-center">
-                    You don't have any bookings waiting to happen
+                    You don&apos;t have any bookings waiting to happen
                   </h3>
                   <p className="text-center text-gray-600">
-                    But it's never too late to book your next comfortable and
+                    But it&apos;s never too late to book your next comfortable and
                     easy journey!
                   </p>
                   <Link href="/" className="flex justify-center">

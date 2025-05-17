@@ -1,6 +1,4 @@
-import { BookingList } from "@/types";
-import jsPDF from "jspdf";
-
+// Helper functions for formatting and manipulating data
 
 export const formatTime = (timeString: string) => {
   const [hours, minutes] = timeString.split(":").map(Number);

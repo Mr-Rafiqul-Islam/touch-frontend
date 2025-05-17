@@ -38,7 +38,7 @@ function SeatBooking({
   useEffect(() => {
     const initialBookedSeats = totalSeatsArray.filter((seat) => seat.is_booked == 2);
     setBookedSeats(initialBookedSeats);
-  }, [trip]);
+  }, [trip,totalSeatsArray]);
   const maxSeats = 4;
 
   const toggleSeat = (seat: number) => {

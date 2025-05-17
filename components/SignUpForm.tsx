@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
-import Image from "next/image";
 
 interface SignUpFormValues {
   name: string;

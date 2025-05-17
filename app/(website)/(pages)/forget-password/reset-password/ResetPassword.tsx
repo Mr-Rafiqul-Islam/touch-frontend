@@ -3,7 +3,6 @@ import React from 'react'
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
-import Link from "next/link";
 import { Button } from '@/components/ui/button';
 import { useResetPassword } from '@/utlis/hooks/useResetPassword';
 
