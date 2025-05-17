@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useBooking } from "@/utlis/hooks/useBooking";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { formatDate, formatTime } from "@/lib/helper";
 
 type BookingFormData = {
   passenger_phone: number;
@@ -18,25 +18,26 @@ type BookingFormData = {
 };
 
 export default function BookingForm() {
-  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<BookingFormData>();
   const [gender, setGender] = useState<"male" | "female">("male");
+  const bookingData = useSelector((state: RootState) => state.booking);
   const tripData = useSelector((state: RootState) => state.trip);
-  console.log(tripData);
-  const { mutate, isSuccess } = useBooking();
+  console.log(bookingData, "bookingData");
+  console.log(tripData, "tripData");
+  const { mutate } = useBooking();
 
   const onSubmit = (data: BookingFormData) => {
     console.log("Form Submitted:", data);
     const bookingPayload = {
       ...data,
-      user_id: tripData.user_id ?? 0, // Provide a default value or handle null
-      trip_id: tripData.trip_id ?? 0, // Provide a default value or handle null
-      seat_data: tripData.seat_data,
-      travel_date: tripData.travel_date ?? "", // Provide a default value or handle null
+      user_id: bookingData.user_id ?? 0, // Provide a default value or handle null
+      trip_id: bookingData.trip_id ?? 0, // Provide a default value or handle null
+      seat_data: bookingData.seat_data,
+      travel_date: bookingData.travel_date ?? "", // Provide a default value or handle null
     };
     console.log(bookingPayload);
     mutate(bookingPayload, {
@@ -53,7 +54,7 @@ export default function BookingForm() {
           progress: undefined,
           theme: "light",
           transition: Bounce, // Redirect to the verify page on success
-          onClose: () => window.location.href = "/my-booking",
+          onClose: () => (window.location.href = "/my-booking"),
         });
       },
       onError: (error: any) => {
@@ -75,22 +76,22 @@ export default function BookingForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Passenger Details */}
-      <div className="sm:col-span-2">
-      <ToastContainer
-        position="top-right"
-        autoClose={1500}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      <div className="lg:col-span-2">
+        <ToastContainer
+          position="top-right"
+          autoClose={1500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
         <Card className="h-full">
           <CardHeader>
             <CardTitle>Passenger Details</CardTitle>
@@ -151,32 +152,52 @@ export default function BookingForm() {
       </div>
 
       {/* Ticket Info */}
-      <div className="sm:col-span-1 w-full">
+      <div className="lg:col-span-1 w-full">
         <Card className="h-full">
           <CardHeader>
-            <CardTitle>Trip Information</CardTitle>
+            <CardTitle className="text-center lg:text-start">Trip Information</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <p className="font-semibold">Shohagh Paribahan</p>
+              <p className="font-semibold text-xl lg:text-start text-center">{tripData?.vehicle}</p>
               <div className="flex items-center justify-between">
-                <p className="text-2xl font-bold text-primary-color">৳2200</p>
-                <p>
+                <p className="text-xl font-bold text-primary-color">{`${
+                  tripData?.price
+                } x${bookingData?.seat_data.length} = ${
+                  tripData?.price * bookingData?.seat_data.length
+                }`}</p>
+                {/* <p>
                   Seat: <span className="font-semibold">A2</span>
-                </p>
+                </p> */}
+                
+                  <div className="flex gap-2 my-2">
+                                <strong>Seat :</strong>
+                                <span className="flex gap-2">
+                                  {tripData?.selected_seats
+                                    ?.toSorted((a, b) => a.id - b.id)
+                                    .map((seat) => (
+                                      <p key={seat.seat_no}>{seat.seat_no},</p>
+                                    ))}
+                                </span>
+                              </div>
+               
               </div>
-              <div className="grid grid-cols-4 gap-2 place-items-center">
-                <p className="col-span-1 text-sm">
+              <div className="grid grid-cols-6 gap-2 place-items-center">
+                <div className="col-span-2 text-sm">
                   Departure:{" "}
-                  <span className="font-semibold">Dhaka, 10:15 PM</span>
-                </p>
+                  <p className="font-semibold">{tripData?.from}</p>
+                  <p className="font-semibold">{formatDate(tripData.start_date)}</p>
+                  <p className="font-semibold">{formatTime(tripData.start_time)}</p>
+                </div>
                 <p className="col-span-2 justify-center flex text-gray-500">
-                  --------------------
+                  ----------------
                 </p>
-                <p className="col-span-1 text-sm">
+                <div className="col-span-2 text-sm">
                   Arrival:{" "}
-                  <span className="font-semibold">Cox's Bazar, 06:15 AM</span>
-                </p>
+                  <p className="font-semibold">{tripData?.to}</p>
+                  <p className="font-semibold">{formatDate(tripData.end_date)}</p>
+                  <p className="font-semibold">{formatTime(tripData.end_time)}</p>
+                </div>
               </div>
             </div>
           </CardContent>

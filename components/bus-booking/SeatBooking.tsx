@@ -15,9 +15,10 @@ import SeatLayout from "./SeatLayout";
 import { Seats, SeatState, Trip } from "@/types";
 import { formatTime } from "@/lib/helper";
 import { useDispatch } from "react-redux";
-import { setTripData } from "@/store/tripSlice";
+import { setBookingData } from "@/store/bookingSlice";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { setTripData } from "@/store/tripSlice";
 
 function SeatBooking({
   isOpen,
@@ -31,6 +32,7 @@ function SeatBooking({
   const dispatch = useDispatch();
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
   const [bookedSeats, setBookedSeats] = useState<Seats[]>([]);
+  const [selectedSeatsInfo, setSelectedSeatsInfo] = useState<Seats[]>([]);
   const [seatData, setSeatData] = useState<SeatState[]>([]);
   const totalSeatsArray = trip?.vehicle?.seats;
   useEffect(() => {
@@ -59,20 +61,41 @@ function SeatBooking({
   }, [selectedSeats]);
   
  console.log(seatData);
+ // Update selectedSeatsInfo whenever selectedSeats changes
+  useEffect(() => {
+    const selectedSeatsDetails = totalSeatsArray.filter((seat) =>
+      selectedSeats.includes(seat.id)
+    );
+    setSelectedSeatsInfo(selectedSeatsDetails);
+  }, [selectedSeats, totalSeatsArray]);
+  console.log(selectedSeatsInfo, "selectedSeatsInfo");
  
   const router = useRouter();
   const handleContinue = (trip: Trip) => {
     const getToken = localStorage.getItem("authToken");
     const userId = localStorage.getItem("user_id");
+    const tripInfo={
+        company: trip?.company?.name,
+        price: trip?.ticket_price,
+        from: trip?.route?.from_location.name,
+        to: trip?.route?.to_location.name,
+        start_date: trip?.start_date,
+        start_time: trip?.start_time,
+        end_time: trip?.end_time,
+        end_date: trip?.end_date,
+        vehicle: trip?.vehicle?.name,
+        selected_seats: selectedSeatsInfo,
+      }
     if (getToken) {
       dispatch(
-        setTripData({
+        setBookingData({
           user_id: userId ? parseInt(userId, 10) : null,
           trip_id: trip.id,
           seat_data: seatData,
           travel_date: trip.start_date,
         })
       );
+      dispatch(setTripData(tripInfo))
       router.push("/booking");
     } else {
       toast.error("Please login to continue", {

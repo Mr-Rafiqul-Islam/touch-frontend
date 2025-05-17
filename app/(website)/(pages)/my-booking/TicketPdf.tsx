@@ -9,8 +9,6 @@ import {
 } from "@react-pdf/renderer";
 import { BookingList } from "@/types";
 
-import ticketBGImage from "./city_bus_bro1.png"; // Update the path as needed
-
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#f5f5f5",
@@ -29,7 +27,7 @@ const styles = StyleSheet.create({
   },
   ticketBgImage: {
     position: "absolute",
-    top: "30px",
+    top: "0",
     left: 0,
     width: "570px",
     height: "500px",
@@ -85,11 +83,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     textTransform: "uppercase",
-    margin: 0,
+    marginLeft: 10,
   },
   subTitle: {
     fontSize: 18,
-    paddingLeft: "20px",
+    paddingLeft: "24px",
     textTransform: "uppercase",
     color: "#fff",
   },
@@ -215,12 +213,7 @@ export const TicketPdf: React.FC<TicketPdfProps> = ({ booking }) => {
               <View style={styles.header}>
                 <View style={styles.leftSection}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    {company?.site_setting?.logo ?
-                      <Image src={`${baseurl}/${company?.site_setting?.logo}`}  style={styles.logo} />
-                      : <Text style={{marginRight: '10px'}}>Logo N/A</Text>
-                    }
-                    
-                    <Text style={styles.title}>{vehicle?.name || ""}</Text>
+                    <Text style={styles.title}>{vehicle?.name || "N/A"}</Text>
                   </View>
                 </View>
                 <View style={styles.rightSection}>

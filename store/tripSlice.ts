@@ -1,28 +1,37 @@
-import { Seats, SeatState } from "@/types";
+import { Seats } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
-
-
 interface TripState {
-  user_id: number | null;
-  trip_id: number | null;
-  seat_data: SeatState[];
-  travel_date: string | null;
+  company: string;
+  price: string;
+  from: string;
+  to: string;
+  start_date: string;
+  start_time: string;
+  end_time: string;
+  end_date: string;
+  vehicle: string;
+  selected_seats:Seats[];
 }
 
 const initialState: TripState = {
-  user_id: null,
-  trip_id: null,
-  seat_data: [],
-  travel_date: null,
+  company: "",
+  price: "",
+  from: "",
+  to: "",
+  start_date: "",
+  start_time: "",
+  end_time: "",
+  end_date: "",
+  vehicle: "",
+  selected_seats: [],
 };
 
 const tripSlice = createSlice({
   name: "trip",
   initialState,
   reducers: {
-    setTripData: (state, action: PayloadAction<Partial<TripState>>) => {
+    setTripData: (state, action: PayloadAction<TripState>) => {
       return { ...state, ...action.payload };
     },
     resetTrip: () => initialState,

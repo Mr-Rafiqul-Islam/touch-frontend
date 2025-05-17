@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatTime, formatDate, handleDownloadPDF} from "@/lib/helper";
+import { formatTime, formatDate } from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { BookingList } from "@/types";
 import { useMyBooking } from "@/utlis/hooks/useFetchLocations";
-import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -49,13 +49,27 @@ const MyBooking = () => {
     });
   };
 
-  // for opening a a pdf with new tab
-  // This function will open the PDF in a new tab
-  const openPdfInNewTab = async (booking: BookingList) => {
-    const blob = await pdf(<TicketPdf booking={booking} />).toBlob();
-    const fileURL = URL.createObjectURL(blob);
-    window.open(fileURL, "_blank");
-  };
+  // Filter the booking list based on activeTab and year filters
+  const filteredBookings = bookingList.filter((item) => {
+    // Filter by active tab "all" or "pending"
+    if (activeTab === "pending") {
+      // Adjust this condition based on how you define "pending"
+      if (item.status !== "pending") {
+        return false;
+      }
+    }
+
+    // If no filters checked, include all
+    if (!isAnyFilterChecked) {
+      return true;
+    }
+
+    // Extract year from trip start_date (assuming ISO format)
+    const bookingYear = new Date(item?.trip?.start_date).getFullYear().toString();
+
+    // Include booking if its year is one of the checked filters
+    return filters[bookingYear as keyof typeof filters];
+  });
 
   return (
     <div className="container py-10">
@@ -115,7 +129,7 @@ const MyBooking = () => {
                       className="data-[state=checked]:bg-primary-color data-[state=checked]:border-primary-color"
                     />
                     <Label htmlFor={year} className="cursor-pointer capitalize">
-                      {year.replace(/([A-Z])/g, " $1").trim()}
+                      {year.replace(/([A-Z])/g, " \$1").trim()}
                     </Label>
                   </p>
                 ))}
@@ -135,9 +149,9 @@ const MyBooking = () => {
                     </>
                   ) : (
                     <div>
-                      {bookingList?.length > 0 ? (
+                      {filteredBookings.length > 0 ? (
                         <div>
-                          {bookingList.map((item) => (
+                          {filteredBookings.map((item) => (
                             <div key={item.id} className="border-b mb-2 ">
                               <h2 className="text-xl text-primary-color font-bold">
                                 {item.company?.name}
@@ -181,21 +195,17 @@ const MyBooking = () => {
                                 }BDT`}</span>
                               </div>
                               <div className="my-2 text-start md:text-end">
-                                <PDFDownloadLink
-                                  document={<TicketPdf booking={item} />}
-                                  fileName="ticket.pdf"
-                                >
-                                  {({ loading }) =>
-                                    loading ? "Loading..." : "Download Ticket"
-                                  }
-                                </PDFDownloadLink>
                                 <Button
                                   variant="default"
                                   className="bg-primary-color text-white transition-all duration-300 mx-2"
                                   size="sm"
-                                  onClick={() => openPdfInNewTab(item)}
                                 >
-                                  Open Ticket
+                                  <PDFDownloadLink
+                                    document={<TicketPdf booking={item} />}
+                                    fileName={`${item?.passenger_name}-ticket.pdf`}
+                                  >
+                                    Download Ticket
+                                  </PDFDownloadLink>
                                 </Button>
                               </div>
                             </div>
